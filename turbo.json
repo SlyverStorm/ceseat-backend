@@ -9,6 +9,9 @@
     },
     "dev": {
       "cache": false
+    },
+    "docker-compose": {
+      "cache": false
     }
   }
 }
