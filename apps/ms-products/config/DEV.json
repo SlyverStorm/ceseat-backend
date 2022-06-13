@@ -1,8 +1,0 @@
-{
-    "context": {
-        "appName": "ceseat-ms-template-DEV"
-    },
-    "logger": {
-        "logLevel": "debug"
-    }
-}
