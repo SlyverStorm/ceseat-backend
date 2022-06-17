@@ -1,19 +1,34 @@
-import { PrismaClient } from "@prisma/client";
-import { customAlphabet } from "nanoid";
-//import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mongoose";
-// import ProductModel, { ProductDocument } from "../models/product.model";
+import { Prisma, PrismaClient } from "@prisma/client";
+import prismaClient from "../middleware/prisma";
+import logger from "../utils/logger";
 
-const prisma = new PrismaClient()
-const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 10);
+const prisma = prismaClient
 
 export async function createUser(body: any, imgpath: string | null) {
 
   const data = {
-      id: `user_${nanoid()}`,
       image: imgpath,
       ...body
+  };
+
+  try {
+    return await prisma.user.create({data: data});
   }
-  return await prisma.user.create({data: data})
+  catch  (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === 'P2002') {
+        logger.debug(`Unable to create user: unique constraint violation on ${JSON.stringify(e.meta)}`)
+        throw {
+          status: 400,
+          msg: "Unique constraint violation",
+          ...e.meta
+        }
+      }
+      logger.error(`Prisma encountered an error creating user: ${e} | body sent: ${body}`)
+      throw e
+    }
+  }
+  
 }
 
 export async function getUser(_id: string) {
@@ -29,6 +44,7 @@ export async function getAllUsers() {
 }
 
 export async function updateUser(_id: string, body: any) {
+  try{
     return await prisma.user.update({
         where: {
             id: _id,
@@ -37,6 +53,21 @@ export async function updateUser(_id: string, body: any) {
             ...body
           },
     })
+  }
+  catch  (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === 'P2002') {
+        logger.debug(`Unable to uspdate user: unique constraint violation on ${JSON.stringify(e.meta)}`)
+        throw {
+          status: 400,
+          msg: "Unique constraint violation",
+          ...e.meta
+        }
+      }
+      logger.error(`Prisma encountered an error creating user: ${e} | body sent: ${body}`)
+      throw e
+    }
+  }
 }
 
 export async function deleteUser(_id: string) {
@@ -45,4 +76,4 @@ export async function deleteUser(_id: string) {
       id: _id,
     },
   })
-}
+};

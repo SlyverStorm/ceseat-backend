@@ -4,6 +4,7 @@ import logger from "../utils/logger";
 import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "../services/user.service"
 import { deleteImage, updateImage, getImage } from "../utils/images";
 import path from "path";
+import bodyParser from "body-parser";
 
 export async function createUserHandler(
     req: Request<{}, {}, CreateUserInput["body"]>, 
@@ -21,15 +22,12 @@ export async function createUserHandler(
     logger.debug(`Creating new user from request...`)
     try {
         const user = await createUser(body, filepath);
-        //if(req.file) updateImage(req.file, req.file.filename);
         return res.send(user);
     }
-    catch(e){
-        const bodyString = JSON.stringify(body)
-        const msg = JSON.stringify(e)
+    catch(e:any){
         if(req.file) deleteImage(req.file.filename);
-        logger.error(`Prisma encountered an error creating user: ${msg} | body sent: ${bodyString}`)
-        return res.sendStatus(500)
+        if (e.status) return res.status(e.status).send(e);
+        return res.sendStatus(500);
     }
 }
 
@@ -79,17 +77,17 @@ export async function updateUserHandler(
     
     try {
         const user = await getUser(_id);
-        if (!user) return res.sendStatus(404);
-    
+        if (!user) return res.sendStatus(404); // 404: When user do not exist
+        if (req.file && user.image == null) update.image = req.file.filename // Handle when user created an account without an image
+
         const updatedUser = await updateUser(_id, update);
-        if(req.file && updatedUser.image != null) updateImage(req.file, updatedUser.image);
+        if(req.file && user.image != null && updatedUser?.image != null) updateImage(req.file, updatedUser.image); // Handle image replace when updating a user with another image
         return res.send(updatedUser);
     }
-    catch(e) {
-        const msg = JSON.stringify(e)
+    catch(e:any) {
         if(req.file) deleteImage(req.file.filename);
-        logger.error(`Prisma encountered an error updating users: ${msg} | id sent: ${_id} | body sent: ${update}`)
-        return res.sendStatus(500)
+        if (e.status) return res.status(e.status).send(e);
+        return res.sendStatus(500);
     }
 }
 
