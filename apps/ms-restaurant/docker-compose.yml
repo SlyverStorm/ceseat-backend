@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  ms-restaurant:
+    container_name: ms-auth
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=DEV
+    build:
+        context: ./ 
+
+  db:
+    image: mongo:latest
+    container_name: db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
