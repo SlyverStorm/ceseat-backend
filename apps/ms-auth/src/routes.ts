@@ -1,8 +1,11 @@
-import { Express, Request, Response } from "express";
+import { Express } from "express";
 import { createUserHandler, deleteUserHandler, getAllUsersHandler, getUserHandler, getUserImageHandler, updateUserHandler } from "./controllers/user.controller";
 import validateRessource from "./middleware/validateRessource";
 import { createUserSchema, deleteUserSchema, getUserSchema, updateUserSchema } from "./schemas/user.schema";
 import { upload } from "./middleware/imageUpload";
+import { createSessionSchema } from "./schemas/session.schema";
+import { createSessionHandler, deleteSessionHandler, getSessionsHandler } from "./controllers/session.controller";
+import requireUser from "./middleware/requireUser";
 
 function routes(app: Express) {
 
@@ -34,8 +37,11 @@ function routes(app: Express) {
     app.get("/users", getAllUsersHandler);
     app.put("/users/:_id", upload.single("image"), validateRessource(updateUserSchema), updateUserHandler);
     app.delete("/users/:_id", validateRessource(deleteUserSchema), deleteUserHandler);
-
     app.get("/users/images/:img", getUserImageHandler)
+
+    app.post("/sessions", validateRessource(createSessionSchema), createSessionHandler);
+    app.get("/sessions", requireUser("all"), getSessionsHandler);
+    app.delete("/sessions", requireUser("all"), deleteSessionHandler);
 
 }
 

@@ -1,11 +1,11 @@
 import express from "express";
 import 'dotenv/config';
 import config from "config";
-import connect from "./utils/connect";
-import logger from "./utils/logger"
+import logger from "./utils/logger.util"
 import routes from "./routes";
-import swaggerDocs from "./utils/swagger";
+import swaggerDocs from "./utils/swagger.util";
 import cors from "cors";
+import deserializeUser from "./middleware/deserializeUser"
 
 //Displaying context data (app name and version) from configuration :
 const appName = config.get<number>("context.appName");
@@ -20,6 +20,7 @@ app.use(express.json());
 app.use(cors({
     origin: '*'
 }));
+app.use(deserializeUser)
 
 //Importing listen port from configuration
 const port = config.get<number>("connect.port");

@@ -1,6 +1,9 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import prismaClient from "../middleware/prisma";
-import logger from "../utils/logger";
+import logger from "../utils/logger.util";
+import bcrypt from "bcrypt"
+import { CreateSessionInput } from "../schemas/session.schema";
+import { getUserOutput } from "../models/userOutput.model";
 
 const prisma = prismaClient
 
@@ -12,7 +15,12 @@ export async function createUser(body: any, imgpath: string | null) {
   };
 
   try {
-    return await prisma.user.create({data: data});
+    return await prisma.user.create({
+      data: data,
+      select: {
+        ...getUserOutput
+      }
+    });
   }
   catch  (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -36,11 +44,19 @@ export async function getUser(_id: string) {
         where: {
           id: _id,
         },
+        select: {
+          ...getUserOutput
+        }
       })
 }
 
+// A supprimer ou refaire pour quelle soit accéssible par certain users
 export async function getAllUsers() {
-    return await prisma.user.findMany()
+    return await prisma.user.findMany({
+      select: {
+        ...getUserOutput
+      }
+    })
 }
 
 export async function updateUser(_id: string, body: any) {
@@ -52,6 +68,9 @@ export async function updateUser(_id: string, body: any) {
           data: {
             ...body
           },
+          select: {
+            ...getUserOutput
+          }
     })
   }
   catch  (e) {
@@ -76,4 +95,17 @@ export async function deleteUser(_id: string) {
       id: _id,
     },
   })
+};
+
+export async function validateUserCredentials(credentials: CreateSessionInput["body"]/*email: string, password: string*/) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: credentials.email
+    },
+  });
+  if (!user) return { valid: false, user: null};
+
+  const isValid = await bcrypt.compare(credentials.password, user.password)
+  if(!isValid) return  {valid: isValid, user: null};
+  return {valid: isValid, user: user};
 };

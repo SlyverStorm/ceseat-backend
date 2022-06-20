@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import logger from "../utils/logger";
+import logger from "../utils/logger.util";
 import bcrypt from "bcrypt";
 import { customAlphabet } from "nanoid";
 
@@ -12,6 +12,16 @@ prismaClient.$use(async (params, next) => {
     if (params.action === "create" && params.model === "User") {
         let user = params.args.data;
         user.id = `user_${nanoid()}`;
+    }
+    return await next(params);
+});
+
+//Session Id generation middleware
+prismaClient.$use(async (params, next) => {
+    
+    if (params.action === "create" && params.model === "Session") {
+        let user = params.args.data;
+        user.id = `session_${nanoid()}`;
     }
     return await next(params);
 });

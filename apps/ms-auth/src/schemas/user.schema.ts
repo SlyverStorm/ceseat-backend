@@ -1,5 +1,4 @@
-import { z, object, number, string, TypeOf } from "zod"
-import { zfd } from "zod-form-data"
+import { object, number, string, TypeOf } from "zod";
 
 const phoneRegExp = /^((\+33\s|0)[1-9])([0-9][0-9]){4}$/;
 const userIdRegExp = /^user_\w+/;

@@ -27,7 +27,16 @@ export default {
     //Connexion variables
     connect: {
         port: 3000,
-        dbUri: process.env.DATABASE_URL // ex : "mongodb://db:27017"
+    //     dbUri: process.env.DATABASE_URL // ex : "mongodb://db:27017" // NOT USEFUL IN OUR CASE BESAUSE OF PRISMA WITH MYSQL CONNEXION
+    }, 
+
+    jwt: {
+        accessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC_KEY,
+        accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
+        refreshTokenPublicKey: process.env.REFRESH_TOKEN_PUBLIC_KEY,
+        refreshTokenPrivateKey: process.env.REFRESH_TOKEN_PRIVATE_KEY,
+        accessTokenTtl: "1m",
+        refreshTokenTtl: "1m",
     },
 
     //Images upload variables

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AnyZodObject } from "zod";
-import logger from "../utils/logger";
-import { deleteImage } from "../utils/images";
+import logger from "../utils/logger.util";
+import { deleteImage } from "../utils/images.util";
 
 const validate =
   (schema: AnyZodObject) =>

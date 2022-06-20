@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import { CreateUserInput, GetUserInput, UpdateUserInput, DeleteUserInput } from "../schemas/user.schema";
-import logger from "../utils/logger";
+import logger from "../utils/logger.util";
 import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "../services/user.service"
-import { deleteImage, updateImage, getImage } from "../utils/images";
+import { deleteImage, updateImage, getImage } from "../utils/images.util";
 import path from "path";
-import bodyParser from "body-parser";
 
 export async function createUserHandler(
     req: Request<{}, {}, CreateUserInput["body"]>, 

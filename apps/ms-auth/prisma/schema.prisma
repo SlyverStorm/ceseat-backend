@@ -37,6 +37,8 @@ model User {
 
   refererUser Referent[] @relation("refered")
   ReferedUsers Referent[] @relation("referer")
+
+  sessions Session[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -44,10 +46,26 @@ model User {
 
 model Referent {
   id String @id @default(cuid())
+
   referentUser User @relation("referer", fields: [referentUserId], references: [id])
   referentUserId String
+
   newUser User @relation("refered", fields: [newUserId], references: [id])
   newUserId String @unique
+
+  createdAt DateTime @default(now())
+}
+
+model Session {
+  id String @id @default(cuid())
+
+  user User @relation(fields: [userId], references: [id])
+  userId String
+
+  valid Boolean @default(true)
+  userAgent String @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 

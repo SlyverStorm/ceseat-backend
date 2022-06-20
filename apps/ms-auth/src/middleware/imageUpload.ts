@@ -1,6 +1,6 @@
 import multer from "multer";
 import config from "config";
-import logger from "../utils/logger";
+import logger from "../utils/logger.util";
 import { customAlphabet } from "nanoid";
 
 const imgDirectory = config.get<string>("images.destination");

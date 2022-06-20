@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  reverse-proxy:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+
+  db-mysql:
+    container_name: db-mysql
+    image: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_DATABASE=dbusers
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=rootsecret
+      - MYSQL_USER=msauth
+      - MYSQL_PASSWORD=msauthsecret
+    command: --init-file /data/application/init.sql
+    volumes:
+      - ./init.sql:/data/application/init.sql
