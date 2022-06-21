@@ -15,13 +15,11 @@ CREATE TABLE IF NOT EXISTS `Role` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-INSERT INTO `Role` (`name`)
-VALUES
-(`customer`),
-(`driver`),
-(`restaurant`),
-(`commercial`),
-(`technical`);
+INSERT INTO `Role` (`name`) VALUES ("customer");
+-- (`driver`),
+-- (`restaurant`),
+-- (`commercial`),
+-- (`technical`);
 
 -- CreateTable
 CREATE TABLE IF NOT EXISTS `User` (

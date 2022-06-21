@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import logger from "../utils/logger.util";
 import bcrypt from "bcrypt";
 import { customAlphabet } from "nanoid";
 

@@ -26,7 +26,7 @@ export default {
 
     //Connexion variables
     connect: {
-        port: 3000,
+        port: 3002,
     //     dbUri: process.env.DATABASE_URL // ex : "mongodb://db:27017" // NOT USEFUL IN OUR CASE BESAUSE OF PRISMA WITH MYSQL CONNEXION
     }, 
 
