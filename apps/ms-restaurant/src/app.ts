@@ -5,6 +5,7 @@ import logger from "./utils/logger.util"
 import routes from "./routes";
 import swaggerDocs from "./utils/swagger.util";
 import cors from "cors";
+import connect from "./utils/connect";
 
 //Displaying context data (app name and version) from configuration :
 const appName = config.get<number>("context.appName");
@@ -36,7 +37,7 @@ app.listen(port, () => {
     logger.info(`Config details : ${configDetails}`)
 
     //Connect app to MongoDB
-    // connect();
+    connect();
     //Define app routes
     routes(app);
     //Run swagger documentation server

@@ -1,75 +1,57 @@
 import { object, number, string, TypeOf } from "zod";
 
-const phoneRegExp = /^((\+33\s|0)[1-9])([0-9][0-9]){4}$/;
-const userIdRegExp = /^user_\w+/;
+const restaurantIdRegExp = /^restaurant_\w+/;
 
-const createUserPayload = {
+const createRestaurantPayload = {
     body: object({
         name: string({
-            required_error: "Prénom requis"
+            required_error: "Nom du restaurant requis"
         }).max(35, "Taille maximale de 35 caractères"),
-        surname: string({
-            required_error: "Nom requis"
-        }).max(35, "Taille maximale de 35 caractères"),
-        email: string({
-            required_error: "Adresse email requis "
-        }).email().max(320, "Taille maximale de 320 caractères"),
-        password: string({
-            required_error: "Mot-de-passe requis"
-        }).min(10, "Taille minimale de 10 caractères").max(50, "Taille maximale de 50 caractères"),
-        phone: string({
-            required_error: "Numéro de téléphone requis"
-        }).regex(phoneRegExp, "Numéro de téléphone incorrect"),
-        roleId: number({}).optional()
+        address: string({
+            required_error: "L'adresse du restaurant est requise pour créer un nouveau restaurant"
+        }).max(500),
+        description: string({}).optional()
     }).strict()
 };
 
-const updateUserPayload = {
+const updateRestaurantPayload = {
     body: object({
         name: string({
-            required_error: "Prénom requis"
+            required_error: "Nom du restaurant requis"
         }).max(35, "Taille maximale de 35 caractères").optional(),
-        surname: string({
-            required_error: "Nom requis"
-        }).max(35, "Taille maximale de 35 caractères").optional(),
-        email: string({
-            required_error: "Adresse email requis "
-        }).max(320, "Taille maximale de 320 caractères").email().optional(),
-        password: string({
-            required_error: "Mot-de-passe requis"
-        }).min(10, "Taille minimale de 10 caractères").max(50, "Taille maximale de 50 caractères").optional(),
-        phone: string({
-            required_error: "Numéro de téléphone requis"
-        }).regex(phoneRegExp, "Numéro de téléphone incorrect").optional()
+        address: string({
+            required_error: "L'adresse du restaurant est requise pour créer un nouveau restaurant"
+        }).max(500).optional(),
+        description: string({}).optional()
     }).strict()
 };
 
 const params = {
     params: object({
-        _id: string({
-            required_error: "Identifiant utilisateur est requis"
-        }).regex(userIdRegExp, "Identifiant utilisateur incorrect")
+        restaurantId: string({
+            required_error: "Identifiant de restaurant requis"
+        }).regex(restaurantIdRegExp, "Identifiant de restaurant incorrect")
     }).strict()
 };
 
-export const createUserSchema = object({
-    ...createUserPayload
+export const createRestaurantSchema = object({
+    ...createRestaurantPayload
 })
 
-export const getUserSchema = object({
+export const getRestaurantSchema = object({
     ...params
 })
 
-export const updateUserSchema = object({
-    ...updateUserPayload,
+export const updateRestaurantSchema = object({
+    ...updateRestaurantPayload,
     ...params
 })
 
-export const deleteUserSchema = object({
+export const deleteRestaurantSchema = object({
     ...params
 })
 
-export type CreateUserInput = TypeOf<typeof createUserSchema>
-export type GetUserInput = TypeOf<typeof getUserSchema>
-export type UpdateUserInput = TypeOf<typeof updateUserSchema>
-export type DeleteUserInput = TypeOf<typeof deleteUserSchema>
+export type CreateRestaurantInput = TypeOf<typeof createRestaurantSchema>
+export type GetRestaurantInput = TypeOf<typeof getRestaurantSchema>
+export type UpdateRestaurantInput = TypeOf<typeof updateRestaurantSchema>
+export type DeleteRestaurantInput = TypeOf<typeof deleteRestaurantSchema>
