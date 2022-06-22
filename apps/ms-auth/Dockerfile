@@ -8,5 +8,6 @@ WORKDIR /src
 RUN rm -rf /src/node_modules /src/build
 RUN pnpm i && pnpm build
 
-CMD ["./run.sh"]
+ENTRYPOINT ["/bin/bash", "run.sh"]
+# CMD  ["ls"]
 EXPOSE 3000

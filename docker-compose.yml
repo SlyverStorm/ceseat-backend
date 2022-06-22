@@ -2,13 +2,17 @@ version: '3.7'
 services:
 
 # Nginx reverse proxy :
-  reverse-proxy:
+  nginx-proxy:
+    container_name: nginx-proxy
     image: nginx
     restart: unless-stopped
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
+    depends_on:
+      - ms-auth
+      - ms-restaurant
 
 # Backend databases :
   db-mysql:
@@ -63,3 +67,5 @@ services:
       - DATABASE_URL=mongodb://db-mongodb:27017
     build:
         context: ./apps/ms-restaurant/
+    depends_on:
+      - db-mongodb
