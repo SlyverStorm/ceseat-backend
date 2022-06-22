@@ -1,9 +1,6 @@
 # Build directory
 build
 
-# Prisma migrate directory
-prisma/migrations
-
 # Images directory
 images/*
 !images/default.png

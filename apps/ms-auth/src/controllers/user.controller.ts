@@ -18,7 +18,7 @@ export async function createUserHandler(
         filepath = null;
     }
 
-    logger.debug(`Creating new user from request...`)
+    //logger.debug(`Creating new user from request...`)
     try {
         const user = await createUser(body, filepath);
         return res.send(user);
@@ -35,7 +35,7 @@ export async function getUserHandler(
     res: Response
 ) {
     const _id = req.params._id;
-    logger.debug(`Fetching user from ${_id}...`)
+    //logger.debug(`Fetching user from ${_id}...`)
 
     try {
         const user = await getUser(_id);
@@ -53,7 +53,7 @@ export async function getAllUsersHandler(
     req: Request,
     res: Response
 ) {
-    logger.debug(`Fetching all users...`)
+    //logger.debug(`Fetching all users...`)
     try {
         const users = await getAllUsers();
         if (!users) return res.sendStatus(404);
@@ -72,7 +72,7 @@ export async function updateUserHandler(
 ) {
     const _id = req.params._id;
     const update = req.body;
-    logger.debug(`Updating user from ${_id}...`)
+    //logger.debug(`Updating user from ${_id}...`)
     
     try {
         const user = await getUser(_id);
@@ -95,7 +95,7 @@ export async function deleteUserHandler(
     res: Response
 ) {
     const _id = req.params._id;
-    logger.debug(`Deleting user from ${_id}...`)
+    //logger.debug(`Deleting user from ${_id}...`)
 
     try {
         const product = await getUser(_id);
@@ -120,7 +120,7 @@ export async function getUserImageHandler(
     res: Response
 ) {
     const imgId = req.params.img;
-    logger.debug(`Getting image from ${imgId}...`)
+    //logger.debug(`Getting image from ${imgId}...`)
 
     const imagepath = await getImage(imgId);
     if (imagepath != null) res.sendFile(path.join(__dirname, "../../",imagepath));
