@@ -6,6 +6,7 @@ import { upload } from "./middleware/imageUpload";
 import { createSessionSchema } from "./schemas/session.schema";
 import { createSessionHandler, deleteSessionHandler, getSessionsHandler } from "./controllers/session.controller";
 import requireUser from "./middleware/requireUser";
+import logger from "./utils/logger.util"
 
 function routes(app: Express) {
 
@@ -42,6 +43,11 @@ function routes(app: Express) {
     app.post("/sessions", validateRessource(createSessionSchema), createSessionHandler);
     app.get("/sessions", requireUser("all"), getSessionsHandler);
     app.delete("/sessions", requireUser("all"), deleteSessionHandler);
+
+    app.get("/sessions/verify", /*requireUser("all"),*/ (req, res) => {
+        //logger.warn(JSON.stringify(req));
+        res.sendStatus(200)
+    })
 
 }
 

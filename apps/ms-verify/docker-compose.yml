@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+  # ms-auth:
+  #   container_name: ms-auth
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=DEV
+  #   build:
+  #       context: ./ 
+
+  # db:
+  #   image: mongo:latest
+  #   container_name: db
+  #   restart: unless-stopped
+  #   ports:
+  #     - "27017:27017"
+
+  db-mysql:
+    container_name: dev_db-mysql
+    image: mysql
+    ports:
+      - "3306:3306"
+    
+    environment:
+      - MYSQL_DATABASE=dbusers
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=rootsecret
+      - MYSQL_USER=msauth
+      - MYSQL_PASSWORD=msauthsecret
+    command: --init-file /data/application/init.sql
+    volumes:
+      - ./init.sql:/data/application/init.sql
+      # - /home/user/db/mysql/data:/var/lib/mysql
+      # - /home/user/db/mysql/init:/docker-entrypoint-initdb.d/:ro
