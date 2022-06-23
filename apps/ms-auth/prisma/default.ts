@@ -7,7 +7,6 @@ export const roles = [
 ]
 
 export const adminUser = {
-    id: "user_admin",
     name: "admin",
     surname: "admin",
     email: "admin@ceseat.com",

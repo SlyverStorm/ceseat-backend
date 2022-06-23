@@ -1,8 +1,34 @@
 import { adminUser, roles } from "./default";
 import { PrismaClient } from "@prisma/client";
 import logger from "../src/utils/logger.util"
+import { customAlphabet } from "nanoid";
+import bcrypt from "bcrypt"
 
 const prisma = new PrismaClient();
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 10);
+
+
+//User Id generation middleware
+prisma.$use(async (params, next) => {
+    
+    if (params.action === "create" && params.model === "User") {
+        let user = params.args.data;
+        user.id = `user_${nanoid()}`;
+    }
+    return await next(params);
+});
+
+//Password encrypt middleware
+prisma.$use(async (params, next) => {
+    
+    if (params.action === ("create" || "update") && params.model === "User") {
+        let user = params.args.data;
+        let salt = bcrypt.genSaltSync(10);
+        let hash = bcrypt.hashSync(user.password, salt);
+        user.password = hash;
+    }
+    return await next(params);
+});
 
 async function seedRoles() {
     logger.info(`Seed process initialized...`)
