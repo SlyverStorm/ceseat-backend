@@ -1,17 +1,26 @@
 version: '3.7'
 services:
-  reverse-proxy:
-    image: nginx
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - 80:80
 
+# Nginx reverse proxy :
+  nginx-proxy:
+    container_name: nginx-proxy
+    image: nginx:latest
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 4000:4000
+    depends_on:
+      - ms-auth
+      - ms-restaurant
+
+# Backend databases :
   db-mysql:
     container_name: db-mysql
+    restart: unless-stopped
     image: mysql
     ports:
-      - "3307:3306"
+      - "3306:3306"
     environment:
       - MYSQL_DATABASE=dbusers
       - MYSQL_ROOT_USER=root
@@ -21,3 +30,49 @@ services:
     command: --init-file /data/application/init.sql
     volumes:
       - ./init.sql:/data/application/init.sql
+
+  db-mongodb:
+    image: mongo:latest
+    container_name: db-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+
+# Backend Microservices :
+  ms-auth:
+    container_name: ms-auth
+    restart: unless-stopped
+    # ports:
+    #   - "3000:3000"
+    environment:
+      - NODE_ENV=DEV
+      - DATABASE_URL=mysql://root:rootsecret@db-mysql/dbusers
+      # - ACCESS_TOKEN_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgHgMgOfZgL+g+zf0GRijEfTywEbcGhRJ04MP72VvQfXp4bb/4f9zDrIJ7a/BDOj+UUY+0OYULPKRkDu4a6uoP8B1kGILJkiU+EM+sU/VKj0WipLz43+gAulUIGJthZoo4lYPf4JOebiRtbrFT3MNFKGmP4PKYMcpHlYEgHbfqdhrAgMBAAE=-----END PUBLIC KEY-----"
+      # - ACCESS_TOKEN_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----MIICWgIBAAKBgHgMgOfZgL+g+zf0GRijEfTywEbcGhRJ04MP72VvQfXp4bb/4f9zDrIJ7a/BDOj+UUY+0OYULPKRkDu4a6uoP8B1kGILJkiU+EM+sU/VKj0WipLz43+gAulUIGJthZoo4lYPf4JOebiRtbrFT3MNFKGmP4PKYMcpHlYEgHbfqdhrAgMBAAECgYAaVdvdgNh+sWkLEFCFGBjzXGGT6esKsltlMBS7ctnMgb9TbvT8HhiGNClhWf9kCY5404TuRFTL7eTvRPjR0noRheHyShRI8g/bdR/kwAtMaAKg2NyOGKNjX++I/T/DBSRK+nlnplJG/mNvNteYOEpdsA7KdiS9kp2ECQqbvZy0EQJBAOQFonz6LvEw24CiKTy+ONQOwUyRx/GzRb2Vs7tPy01mRDyzs1/HGTDwjIcwaYCPBqbQz7ZbTRoQLpaWRwOLuVMCQQCGx1b6nqWpZDKSyKh+LLmuh/uvcxG9xqxg6TeKb37R8+dAviGFxFoZl1Yx5EshmlmfpO6So0fSNbnEzDSFaUmJAkAimuBQCz/4hqupV/LeLxg8xoh7cFxhyA07em6ubKuz8WNFuxfr3zFphfgtxCEey5X81w/O4whOfkozvFbGqPvVAkADesoIFmh4gxm7KGsRNt5kXyZkVTg0ChkRN3QzosVHbmCeD0qWRYd9+aZEC3zVFUMTGBMAvi5wguqU5iDFAP7hAkBp8G1XxZMq1Wq0SJCJtunXJEngneZN43sd5SzfVvi/5WiHt6e+b5AOZo7QbIkzxwXgSXIKSIjZhnJO7DALZE4F-----END RSA PRIVATE KEY-----"
+      # - REFRESH_TOKEN_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCf1ogqu65M8uy5IAixReIKoPLYYIquTPo87gTTYy/ADFkokvT9JqIgLxhMTDP+WsK8aebCrN8YlyLpI9u/8KDSIBc6gF/t0HAHdDDpUPYmxoBJ6z1F5u1FnjHSBcKKUBJUM9HA6aIly0rr5iuJRQy0dqcA9uIWN+ccJaF6+voTuQIDAQAB-----END PUBLIC KEY-----"
+      # - REFRESH_TOKEN_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----MIICXAIBAAKBgQCf1ogqu65M8uy5IAixReIKoPLYYIquTPo87gTTYy/ADFkokvT9JqIgLxhMTDP+WsK8aebCrN8YlyLpI9u/8KDSIBc6gF/t0HAHdDDpUPYmxoBJ6z1F5u1FnjHSBcKKUBJUM9HA6aIly0rr5iuJRQy0dqcA9uIWN+ccJaF6+voTuQIDAQABAoGAIt+w5/n5Bqr+AUo++0avEfiZ46H0wCDlfEPGY8TBV1qaXWLq9wzl1LXRzFvYAEgXMvq8MX98UaYwJMQBHzjGLZotv1/jk1hmihMzEWKUWRmQRvvGeZ5QZVaKhnRZ/D3mnV+w20HZw8GGIL8/I9yXdmolhO+qCcZVvMNBVseaIHECQQDO7vSMS7iJbpm5qr3KjsmMRoTIOu1D0uVTOX7fvC/kuPhbJf/SOthuXE+oNDX7awI41i6VF7J6JCBdRZXQCiSdAkEAxbzX30tGTcsDB4GFyDikZRRcNEur2wz9nFfbbliyr1SlMOBosJ64WSgTQb7o8k+pufoEFBKWAdbD1baKCm0qzQJAWL0QEbnHAOh087HMgbiJpaX3+wWKCbO+s9nMFpXU0/ieSDgbZEPn3Cup3S/GlnJlGYp/n1/yIX6sglL806IF4QJBAI7DsoRoX8EI4w4HSOTvaFoGYi/rto+4CF9Z23cHGTOXhJEOZOeoIOdWFNkyEhPoyl0ZEtq/NIjtW4UwfufaO70CQBqDUuSzG+nOKwu/pif8fTEJc+kO5MSXVMdLi7PuWtlzq20Mui6ZK00kr65r0RCmbdrBQ6XjJdUj1yKzo1YruOs=-----END RSA PRIVATE KEY-----"
+    build:
+        context: ./apps/ms-auth/
+    depends_on:
+      - db-mysql
+      - ms-restaurant
+    # command: cd /src && npx prisma migrate deploy && npx prisma db seed
+
+  ms-restaurant:
+    container_name: ms-restaurant
+    restart: unless-stopped
+    # ports:
+    #   - "3001:3000"
+    environment:
+      - NODE_ENV=DEV
+      - DATABASE_URL=mongodb://db-mongodb:27017
+    build:
+        context: ./apps/ms-restaurant/
+    depends_on:
+      - db-mongodb
+
+  # ms-verify:
+  #   container_name: ms-verify
+  #   restart: unless-stopped
+  #   build:
+  #       context: ./apps/ms-verify/

@@ -6,6 +6,8 @@ import routes from "./routes";
 import swaggerDocs from "./utils/swagger.util";
 import cors from "cors";
 import deserializeUser from "./middleware/deserializeUser"
+import prisma from "./middleware/prisma";
+import requestLogger from "./middleware/requestLogger";
 
 //Displaying context data (app name and version) from configuration :
 const appName = config.get<number>("context.appName");
@@ -20,14 +22,16 @@ app.use(express.json());
 app.use(cors({
     origin: '*'
 }));
-app.use(deserializeUser)
+app.use(requestLogger);
+app.use(deserializeUser);
+
 
 //Importing listen port from configuration
 const port = config.get<number>("connect.port");
 //Importing ENV variable from .env
 const env = process.env.NODE_ENV;
 
-const configDetails = JSON.stringify(config)
+const configDetails = JSON.stringify({...config, jwt: undefined})
 
 //Launching express server on specified port
 app.listen(port, () => {
@@ -39,6 +43,12 @@ app.listen(port, () => {
 
     //Connect app to MongoDB
     // connect();
+    prisma.$connect().then(() => logger.info("Connected to db-mysql")).catch((e:any) => {
+            logger.fatal(`prisma error ${e}`);
+            process.exit(1);
+        }
+    );
+
     //Define app routes
     routes(app);
     //Run swagger documentation server
