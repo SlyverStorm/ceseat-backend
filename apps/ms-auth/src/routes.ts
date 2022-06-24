@@ -44,8 +44,7 @@ function routes(app: Express) {
     app.get("/sessions", requireUser("all"), getSessionsHandler);
     app.delete("/sessions", requireUser("all"), deleteSessionHandler);
 
-    app.get("/sessions/verify", /*requireUser("all"),*/ (req, res) => {
-        //logger.warn(JSON.stringify(req));
+    app.get("/sessions/verify", requireUser("all"), (req, res) => {
         res.sendStatus(200)
     })
 
