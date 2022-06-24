@@ -19,8 +19,7 @@ const createUserPayload = {
         }).min(10, "Taille minimale de 10 caractères").max(50, "Taille maximale de 50 caractères"),
         phone: string({
             required_error: "Numéro de téléphone requis"
-        }).regex(phoneRegExp, "Numéro de téléphone incorrect"),
-        roleId: number({}).optional()
+        }).regex(phoneRegExp, "Numéro de téléphone incorrect")
     }).strict()
 };
 
@@ -46,14 +45,14 @@ const updateUserPayload = {
 
 const params = {
     params: object({
-        _id: string({
+        userid: string({
             required_error: "Identifiant utilisateur est requis"
         }).regex(userIdRegExp, "Identifiant utilisateur incorrect")
     }).strict()
 };
 
 export const createUserSchema = object({
-    ...createUserPayload
+    ...createUserPayload,
 })
 
 export const getUserSchema = object({

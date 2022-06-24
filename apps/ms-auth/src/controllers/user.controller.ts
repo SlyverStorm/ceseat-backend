@@ -5,12 +5,16 @@ import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "../ser
 import { deleteImage, updateImage, getImage } from "../utils/images.util";
 import path from "path";
 
+//User creation handler for commercial users
 export async function createUserHandler(
     req: Request<{}, {}, CreateUserInput["body"]>, 
-    res: Response
+    res: Response,
+    roleId: number = 1
 ) {
-
-    const body = req.body;
+    const body = {
+        ...req.body,
+        roleId: roleId
+    }
     let filepath
     if (req.file) {
         filepath = req.file.filename
@@ -32,13 +36,17 @@ export async function createUserHandler(
 
 export async function getUserHandler(
     req: Request<GetUserInput["params"]>,
-    res: Response
+    res: Response,
+    returnId: boolean = false,
+    self: boolean = true
 ) {
-    const _id = req.params._id;
+    let _id: string
+    if (res.locals.user && self) _id = res.locals.user.id
+    else _id = req.params.userid;
     //logger.debug(`Fetching user from ${_id}...`)
 
     try {
-        const user = await getUser(_id);
+        const user = await getUser(_id, returnId);
         if (!user) return res.sendStatus(404);
         return res.send(user);
     }
@@ -70,7 +78,7 @@ export async function updateUserHandler(
     req: Request<UpdateUserInput["params"]>,
     res: Response
 ) {
-    const _id = req.params._id;
+    const _id = req.params.userid;
     const update = req.body;
     //logger.debug(`Updating user from ${_id}...`)
     
@@ -94,7 +102,7 @@ export async function deleteUserHandler(
     req: Request<GetUserInput["params"]>,
     res: Response
 ) {
-    const _id = req.params._id;
+    const _id = req.params.userid;
     //logger.debug(`Deleting user from ${_id}...`)
 
     try {

@@ -3,12 +3,12 @@ import prismaClient from "../middleware/prisma";
 import logger from "../utils/logger.util";
 import bcrypt from "bcrypt"
 import { CreateSessionInput } from "../schemas/session.schema";
-import { getUserOutput } from "../models/userOutput.model";
+import { commGetUserOutput, getUserOutput } from "../models/userOutput.model";
 
 const prisma = prismaClient
 
 export async function createUser(body: any, imgpath: string | null) {
-
+ 
   const data = {
       image: imgpath,
       ...body
@@ -39,13 +39,16 @@ export async function createUser(body: any, imgpath: string | null) {
   
 }
 
-export async function getUser(_id: string) {
+export async function getUser(_id: string, returnId: boolean = false) {
+
+    const outputSchema = returnId ? commGetUserOutput : getUserOutput
+
     return prisma.user.findUnique({
         where: {
           id: _id,
         },
         select: {
-          ...getUserOutput
+          ...outputSchema
         }
       })
 }
@@ -54,12 +57,15 @@ export async function getUser(_id: string) {
 export async function getAllUsers() {
     return await prisma.user.findMany({
       select: {
-        ...getUserOutput
+        ...commGetUserOutput
       }
     })
 }
 
-export async function updateUser(_id: string, body: any) {
+export async function updateUser(_id: string, body: any, com: boolean = false) {
+
+  const outputSchema = com ? commGetUserOutput : getUserOutput
+
   try{
     return await prisma.user.update({
         where: {
@@ -69,7 +75,7 @@ export async function updateUser(_id: string, body: any) {
             ...body
           },
           select: {
-            ...getUserOutput
+            ...outputSchema
           }
     })
   }

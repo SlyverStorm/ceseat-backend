@@ -14,3 +14,12 @@ export const adminUser = {
     phone: "0566666666",
     roleId: 5
 }
+
+export const commUser = {
+    name: "comm",
+    surname: "comm",
+    email: "commercial@ceseat.com",
+    password: "admin",
+    phone: "0577777777",
+    roleId: 4
+}
