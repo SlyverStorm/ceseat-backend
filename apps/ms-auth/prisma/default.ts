@@ -12,7 +12,8 @@ export const adminUser = {
     email: "admin@ceseat.com",
     password: "admin",
     phone: "0566666666",
-    roleId: 5
+    roleId: 5,
+    refererCode: "admin"
 }
 
 export const commUser = {
@@ -21,5 +22,6 @@ export const commUser = {
     email: "commercial@ceseat.com",
     password: "admin",
     phone: "0577777777",
-    roleId: 4
+    roleId: 4,
+    refererCode: "comm"
 }

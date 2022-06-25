@@ -5,6 +5,7 @@ export const getUserOutput = {
     email: true,
     phone: true,
     image: true,
+    refererCode: true,
     role: {
       select: {
         name: true
@@ -39,6 +40,7 @@ export const commGetUserOutput = {
   email: true,
   phone: true,
   image: true,
+  refererCode: true,
   role: {
     select: {
       name: true

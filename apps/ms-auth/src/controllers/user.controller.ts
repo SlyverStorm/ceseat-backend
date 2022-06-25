@@ -7,6 +7,7 @@ import path from "path";
 import config from "config";
 import { createSession } from "../services/session.service";
 import { signJwt } from "../utils/jwt.util";
+import { createReferer } from "../services/referer.service";
 
 //User creation handler for commercial users
 export async function createUserHandler(
@@ -36,9 +37,14 @@ export async function createUserHandler(
         if (e.status) return res.status(e.status).send(e);
         return res.sendStatus(500);
     }
+    if (!user) return res.sendStatus(500)
+
+    //Create referer if code is provided
+    if (body.refererCode) {
+        user = await createReferer(body.refererCode, user)
+    }
 
     //Create session
-    if (!user) return res.sendStatus(500)
     let session
     try {
         session = await createSession(user.id, req.get("user-agent") || "")

@@ -35,6 +35,7 @@ model User {
   role Role @relation(fields: [roleId], references: [id])
   roleId Int @default(1)
 
+  refererCode String @db.VarChar(8) @unique
   refererUser Referent[] @relation("refered")
   ReferedUsers Referent[] @relation("referer")
 
