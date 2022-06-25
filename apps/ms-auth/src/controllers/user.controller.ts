@@ -5,6 +5,8 @@ import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "../ser
 import { deleteImage, updateImage, getImage } from "../utils/images.util";
 import path from "path";
 import config from "config";
+import { createSession } from "../services/session.service";
+import { signJwt } from "../utils/jwt.util";
 
 //User creation handler for commercial users
 export async function createUserHandler(
@@ -23,16 +25,58 @@ export async function createUserHandler(
         filepath = null;
     }
 
-    //logger.debug(`Creating new user from request...`)
+    //Create new user
+    let user;
     try {
-        const user = await createUser(body, filepath);
-        return res.send(user);
+        user = await createUser(body, filepath);
+        
     }
     catch(e:any){
         if(req.file) deleteImage(req.file.filename);
         if (e.status) return res.status(e.status).send(e);
         return res.sendStatus(500);
     }
+
+    //Create session
+    if (!user) return res.sendStatus(500)
+    let session
+    try {
+        session = await createSession(user.id, req.get("user-agent") || "")
+    }
+    catch (e) {
+        return res.status(500).send(e)
+    }
+
+    //Create an access token
+    const accessToken = signJwt(
+        {
+            id: user.id,
+            session: session.id,
+            role: user.roleId
+        },
+        "accessTokenPrivateKey",
+        {
+            expiresIn: config.get<string>("jwt.accessTokenTtl")
+        }
+    );
+
+    //Create a refresh token
+    const refreshToken = signJwt(
+        {
+            id: user.id,
+            session: session.id,
+            role: user.roleId
+        },
+        "refreshTokenPrivateKey",
+        {
+            expiresIn: config.get<string>("jwt.refreshTokenTtl")
+        }
+    );
+
+    //Return access and refresh token
+    res.setHeader("x-access-token", accessToken);
+    res.setHeader("x-refresh-token", refreshToken);
+    return res.send({...user, id: undefined, roleId: undefined});
 }
 
 export async function getUserHandler(

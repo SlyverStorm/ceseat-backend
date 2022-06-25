@@ -18,7 +18,8 @@ export async function createUser(body: any, imgpath: string | null) {
     return await prisma.user.create({
       data: data,
       select: {
-        ...getUserOutput
+        ...commGetUserOutput,
+        roleId: true
       }
     });
   }
