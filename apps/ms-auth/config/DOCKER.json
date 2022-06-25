@@ -1,0 +1,11 @@
+{
+    "context": {
+        "appName": "ceseat-ms-auth-DOCKER"
+    },
+    "logger": {
+        "logLevel": "debug"
+    },
+    "images": {
+        "destination": "/src/images/"
+    }
+}

@@ -2,17 +2,17 @@ version: '3.7'
 services:
 
 # Nginx reverse proxy :
-  nginx-proxy:
-    container_name: nginx-proxy
-    image: nginx:latest
-    restart: unless-stopped
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - 4000:4000
-    depends_on:
-      - ms-auth
-      - ms-restaurant
+  # nginx-proxy:
+  #   container_name: nginx-proxy
+  #   image: nginx:latest
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     - ms-auth
+  #     - ms-restaurant
 
 # Backend databases :
   db-mysql:
@@ -31,21 +31,21 @@ services:
     volumes:
       - ./init.sql:/data/application/init.sql
 
-  db-mongodb:
-    image: mongo:latest
-    container_name: db-mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
+  # db-mongodb:
+  #   image: mongo:latest
+  #   container_name: db-mongodb
+  #   restart: unless-stopped
+  #   ports:
+  #     - "27017:27017"
 
 # Backend Microservices :
   ms-auth:
     container_name: ms-auth
     restart: unless-stopped
-    # ports:
-    #   - "3000:3000"
+    ports:
+      - "3000:3000"
     environment:
-      - NODE_ENV=DEV
+      - NODE_ENV=DOCKER
       - DATABASE_URL=mysql://root:rootsecret@db-mysql/dbusers
       # - ACCESS_TOKEN_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgHgMgOfZgL+g+zf0GRijEfTywEbcGhRJ04MP72VvQfXp4bb/4f9zDrIJ7a/BDOj+UUY+0OYULPKRkDu4a6uoP8B1kGILJkiU+EM+sU/VKj0WipLz43+gAulUIGJthZoo4lYPf4JOebiRtbrFT3MNFKGmP4PKYMcpHlYEgHbfqdhrAgMBAAE=-----END PUBLIC KEY-----"
       # - ACCESS_TOKEN_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----MIICWgIBAAKBgHgMgOfZgL+g+zf0GRijEfTywEbcGhRJ04MP72VvQfXp4bb/4f9zDrIJ7a/BDOj+UUY+0OYULPKRkDu4a6uoP8B1kGILJkiU+EM+sU/VKj0WipLz43+gAulUIGJthZoo4lYPf4JOebiRtbrFT3MNFKGmP4PKYMcpHlYEgHbfqdhrAgMBAAECgYAaVdvdgNh+sWkLEFCFGBjzXGGT6esKsltlMBS7ctnMgb9TbvT8HhiGNClhWf9kCY5404TuRFTL7eTvRPjR0noRheHyShRI8g/bdR/kwAtMaAKg2NyOGKNjX++I/T/DBSRK+nlnplJG/mNvNteYOEpdsA7KdiS9kp2ECQqbvZy0EQJBAOQFonz6LvEw24CiKTy+ONQOwUyRx/GzRb2Vs7tPy01mRDyzs1/HGTDwjIcwaYCPBqbQz7ZbTRoQLpaWRwOLuVMCQQCGx1b6nqWpZDKSyKh+LLmuh/uvcxG9xqxg6TeKb37R8+dAviGFxFoZl1Yx5EshmlmfpO6So0fSNbnEzDSFaUmJAkAimuBQCz/4hqupV/LeLxg8xoh7cFxhyA07em6ubKuz8WNFuxfr3zFphfgtxCEey5X81w/O4whOfkozvFbGqPvVAkADesoIFmh4gxm7KGsRNt5kXyZkVTg0ChkRN3QzosVHbmCeD0qWRYd9+aZEC3zVFUMTGBMAvi5wguqU5iDFAP7hAkBp8G1XxZMq1Wq0SJCJtunXJEngneZN43sd5SzfVvi/5WiHt6e+b5AOZo7QbIkzxwXgSXIKSIjZhnJO7DALZE4F-----END RSA PRIVATE KEY-----"
@@ -58,18 +58,18 @@ services:
       - ms-restaurant
     # command: cd /src && npx prisma migrate deploy && npx prisma db seed
 
-  ms-restaurant:
-    container_name: ms-restaurant
-    restart: unless-stopped
-    # ports:
-    #   - "3001:3000"
-    environment:
-      - NODE_ENV=DEV
-      - DATABASE_URL=mongodb://db-mongodb:27017
-    build:
-        context: ./apps/ms-restaurant/
-    depends_on:
-      - db-mongodb
+  # ms-restaurant:
+  #   container_name: ms-restaurant
+  #   restart: unless-stopped
+  #   # ports:
+  #   #   - "3001:3000"
+  #   environment:
+  #     - NODE_ENV=DEV
+  #     - DATABASE_URL=mongodb://db-mongodb:27017
+  #   build:
+  #       context: ./apps/ms-restaurant/
+  #   depends_on:
+  #     - db-mongodb
 
   # ms-verify:
   #   container_name: ms-verify

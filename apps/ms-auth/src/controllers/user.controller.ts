@@ -4,6 +4,7 @@ import logger from "../utils/logger.util";
 import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "../services/user.service"
 import { deleteImage, updateImage, getImage } from "../utils/images.util";
 import path from "path";
+import config from "config";
 
 //User creation handler for commercial users
 export async function createUserHandler(
@@ -76,18 +77,23 @@ export async function getAllUsersHandler(
 
 export async function updateUserHandler(
     req: Request<UpdateUserInput["params"]>,
-    res: Response
+    res: Response,
+    returnId: boolean = false,
+    self: boolean = true
 ) {
-    const _id = req.params.userid;
+    let _id: string
+    if (res.locals.user && self) _id = res.locals.user.id
+    else _id = req.params.userid;
     const update = req.body;
     //logger.debug(`Updating user from ${_id}...`)
     
     try {
-        const user = await getUser(_id);
+        const user = await getUser(_id, returnId);
         if (!user) return res.sendStatus(404); // 404: When user do not exist
+        if (user.role.name === "commercial" || user.role.name === "technical") return res.sendStatus(403); // 403: When user has commercial or technical role
         if (req.file && user.image == null) update.image = req.file.filename // Handle when user created an account without an image
 
-        const updatedUser = await updateUser(_id, update);
+        const updatedUser = await updateUser(_id, update, returnId);
         if(req.file && user.image != null && updatedUser?.image != null) updateImage(req.file, updatedUser.image); // Handle image replace when updating a user with another image
         return res.send(updatedUser);
     }
@@ -100,16 +106,20 @@ export async function updateUserHandler(
 
 export async function deleteUserHandler(
     req: Request<GetUserInput["params"]>,
-    res: Response
+    res: Response,
+    self: boolean = true
 ) {
-    const _id = req.params.userid;
+    let _id: string
+    if (res.locals.user && self) _id = res.locals.user.id
+    else _id = req.params.userid;
     //logger.debug(`Deleting user from ${_id}...`)
 
     try {
-        const product = await getUser(_id);
-        if (!product) return res.sendStatus(404);
+        const user = await getUser(_id, true);
+        if (!user) return res.sendStatus(404); // 404: When user do not exist
+        if (user.role.name === "commercial" || user.role.name === "technical") return res.sendStatus(403); // 403: When user has commercial or technical role
     
-        const deletion = await deleteUser(_id);
+        const deletion = await deleteUser(_id, user.email, user.phone);
         if (deletion.image != null) deleteImage(deletion.image)
         return res.send({
             message: "User was deleted with success",
@@ -131,6 +141,10 @@ export async function getUserImageHandler(
     //logger.debug(`Getting image from ${imgId}...`)
 
     const imagepath = await getImage(imgId);
-    if (imagepath != null) res.sendFile(path.join(__dirname, "../../",imagepath));
-    else res.sendFile(path.join(__dirname, "../../images/default.png"));
+    logger.warn(imagepath)
+    if (imagepath != null) res.sendFile(imagepath);
+    else {
+        logger.warn(config.get<string>("images.destination"), "default.png")
+        res.sendFile(path.join(config.get<string>("images.destination"), "default.png"));
+    }
 }

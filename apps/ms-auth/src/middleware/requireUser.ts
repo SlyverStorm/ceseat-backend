@@ -25,7 +25,7 @@ const requireUser = (roleName: "customer" | "driver" | "restaurant" | "commercia
                 break;
         }
         logger.info(`roleName:${roleName}; roleIdRequired:${roleIdRequired}; user.roleId:${user.roleId}`)
-        if (user.roleId != roleIdRequired) return res.sendStatus(403)
+        if (user.role != roleIdRequired) return res.sendStatus(403)
     }
     return next()
 }

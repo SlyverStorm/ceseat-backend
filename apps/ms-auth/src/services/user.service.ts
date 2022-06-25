@@ -43,9 +43,10 @@ export async function getUser(_id: string, returnId: boolean = false) {
 
     const outputSchema = returnId ? commGetUserOutput : getUserOutput
 
-    return prisma.user.findUnique({
+    return prisma.user.findFirst({
         where: {
           id: _id,
+          deleted: false
         },
         select: {
           ...outputSchema
@@ -56,6 +57,9 @@ export async function getUser(_id: string, returnId: boolean = false) {
 // A supprimer ou refaire pour quelle soit accéssible par certain users
 export async function getAllUsers() {
     return await prisma.user.findMany({
+      where: {
+        deleted: false
+      },
       select: {
         ...commGetUserOutput
       }
@@ -69,7 +73,7 @@ export async function updateUser(_id: string, body: any, com: boolean = false) {
   try{
     return await prisma.user.update({
         where: {
-            id: _id,
+            id: _id
           },
           data: {
             ...body
@@ -95,11 +99,17 @@ export async function updateUser(_id: string, body: any, com: boolean = false) {
   }
 }
 
-export async function deleteUser(_id: string) {
-  return prisma.user.delete({
+export async function deleteUser(_id: string, previousEmail: string, previousPhone: string) {
+  return prisma.user.update({
     where: {
       id: _id,
     },
+    data: {
+      email: "del: " + previousEmail,
+      phone: "del: " + previousPhone,
+      deleted: true,
+      image: null
+    }
   })
 };
 

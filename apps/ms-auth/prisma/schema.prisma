@@ -39,6 +39,8 @@ model User {
   ReferedUsers Referent[] @relation("referer")
 
   sessions Session[]
+
+  deleted Boolean @default(false)
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

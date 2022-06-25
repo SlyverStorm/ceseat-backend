@@ -1,7 +1,7 @@
 import config from "config";
 import { Request, Response } from "express";
 import { CreateSessionInput } from "../schemas/session.schema";
-import { createSession, deleteSession, getSessions } from "../services/session.service";
+import { createSession, deleteSession, getAllSessions, getSessions } from "../services/session.service";
 import { validateUserCredentials } from "../services/user.service";
 import { signJwt } from "../utils/jwt.util";
 import logger from "../utils/logger.util";
@@ -21,13 +21,21 @@ export async function createSessionHandler(
     //Create session
     const user = validation.user
     if (user === null) return res.sendStatus(500)
-    const session = await createSession(user.id, req.get("user-agent") || "")
+    let session
+    try {
+        session = await createSession(user.id, req.get("user-agent") || "")
+    }
+    catch (e) {
+        return res.status(500).send(e)
+    }
+    
 
     //Create an access token
     const accessToken = signJwt(
         {
-        ...user, 
-        session: session.id,
+            id: user.id,
+            session: session.id,
+            role: user.roleId
         },
         "accessTokenPrivateKey",
         {
@@ -38,8 +46,9 @@ export async function createSessionHandler(
     //Create a refresh token
     const refreshToken = signJwt(
         {
-        ...user, 
-        session: session.id,
+            id: user.id,
+            session: session.id,
+            role: user.roleId
         },
         "refreshTokenPrivateKey",
         {
@@ -48,19 +57,43 @@ export async function createSessionHandler(
     );
 
     //Return access and refresh token
-    res.send({accessToken, refreshToken, roleId: user.roleId})
+    res.setHeader("x-access-token", accessToken);
+    res.setHeader("x-refresh-token", refreshToken);
+    return res.send({
+        roleId: user.roleId,
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
+        image: user.image
+    })
+    //res.send({accessToken, refreshToken, roleId: user.roleId})
 }
 
 export async function getSessionsHandler(
     req: Request,
     res: Response
 ){
-    const userId = res.locals.user.id
-    logger.info(JSON.stringify(userId))
-    const sessions = await getSessions(userId)
-    logger.info(JSON.stringify(sessions))
+    try {
+        const userId = res.locals.user.id
+        logger.info(JSON.stringify(userId))
+        const sessions = await getSessions(userId)
+        logger.info(JSON.stringify(sessions))
+        return res.send(sessions)
+    }
+    catch (e) {
+        return res.status(500).send(e)
+    }
+    
+}
 
-    return res.send(sessions)
+export async function getAllSessionsHandler(req: Request, res: Response) {
+    try {
+        const sessions = await getAllSessions()
+        return res.send(sessions)
+    }
+    catch (e) {
+        return res.status(500).send(e)
+    }
 }
 
 export async function deleteSessionHandler(req: Request, res: Response) {
