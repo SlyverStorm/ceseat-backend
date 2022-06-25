@@ -2,6 +2,7 @@ import config from "config";
 import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import { resolve } from "node:path";
+import requestLogger from "../middleware/requestLogger";
 
 const imgDirectory = config.get<string>("images.destination");
 

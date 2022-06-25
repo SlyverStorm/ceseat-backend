@@ -20,11 +20,11 @@ export async function createSession(userId: string, userAgent: string) {
   }
   catch  (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      logger.error(`Prisma encountered an error creating user: ${e} | data sent: ${data}`)
+      logger.error(`Prisma encountered an error creating session: ${e} | data sent: ${data}`)
       throw e
     }
     else {
-      logger.error(`Unexepted error encountered creating user: ${e} | data sent: ${data}`)
+      logger.error(`Unexepted error encountered creating session: ${e} | data sent: ${data}`)
       throw e
     }
   }
@@ -43,15 +43,31 @@ export async function getSessions(userId: string) {
   }
   catch  (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      logger.error(`Prisma encountered an error creating user: ${e} | userId sent: ${userId}`)
+      logger.error(`Prisma encountered an error getting user sessions: ${e} | userId sent: ${userId}`)
       throw e
     }
     else {
-      logger.error(`Unexepted error encountered creating user: ${e} | userId sent: ${userId}`)
+      logger.error(`Unexepted error encountered getting user sessions: ${e} | userId sent: ${userId}`)
       throw e
     }
   }
   
+}
+
+export async function getAllSessions() {
+  try {
+    return await prisma.session.findMany();
+  }
+  catch  (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      logger.error(`Prisma encountered an error getting all users sessions: ${e}`)
+      throw e
+    }
+    else {
+      logger.error(`Unexepted error encountered getting all users sessions: ${e}`)
+      throw e
+    }
+  }
 }
 
 export async function deleteSession(sessionId: string) {
@@ -107,5 +123,28 @@ export async function reIssueAccessToken({
   );
 
   return accessToken;
+}
+
+export async function verifySession(token: any) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: token.id
+    }
+  })
+  if (user) {
+    const session = await prisma.session.findUnique({
+      where:  {
+        id: token.session
+      }
+    })
+    if (!user || user.deleted || user.isSuspended) {
+      if (session) await deleteSession(session.id)
+      return false
+    }
+    else if (session && !session.valid) return false
+    return true
+  }
+  return false
+  
 }
 

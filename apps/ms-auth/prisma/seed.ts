@@ -1,4 +1,4 @@
-import { adminUser, roles } from "./default";
+import { adminUser, commUser, roles } from "./default";
 import { PrismaClient } from "@prisma/client";
 import logger from "../src/utils/logger.util"
 import { customAlphabet } from "nanoid";
@@ -51,13 +51,24 @@ async function seedRoles() {
         
     }
 
-    const existing = await prisma.user.findFirst({
+    const existingAdmin = await prisma.user.findFirst({
         where: adminUser
     })
-    if (existing === null) {
+    if (existingAdmin === null) {
         await prisma.user.create({
             data: adminUser
         })
+        logger.info(`User admin created`)
+    }
+
+    const existingComm = await prisma.user.findFirst({
+        where: commUser
+    })
+    if (existingComm === null) {
+        await prisma.user.create({
+            data: commUser
+        })
+        logger.info(`User commercial created`)
     }
     logger.info(`Seed process ended with success !`)
 }

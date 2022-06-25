@@ -19,8 +19,8 @@ prismaClient.$use(async (params, next) => {
 prismaClient.$use(async (params, next) => {
     
     if (params.action === "create" && params.model === "Session") {
-        let user = params.args.data;
-        user.id = `session_${nanoid()}`;
+        let session = params.args.data;
+        session.id = `session_${nanoid()}`;
     }
     return await next(params);
 });
