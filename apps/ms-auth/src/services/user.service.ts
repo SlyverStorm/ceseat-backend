@@ -47,7 +47,8 @@ export async function getUser(_id: string, returnId: boolean = false) {
     return prisma.user.findFirst({
         where: {
           id: _id,
-          deleted: false
+          deleted: false,
+          isSuspended: false
         },
         select: {
           ...outputSchema
@@ -59,7 +60,8 @@ export async function getUser(_id: string, returnId: boolean = false) {
 export async function getAllUsers() {
     return await prisma.user.findMany({
       where: {
-        deleted: false
+        deleted: false,
+        isSuspended: false
       },
       select: {
         ...commGetUserOutput

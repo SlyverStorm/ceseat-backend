@@ -1,59 +1,59 @@
 import { Prisma } from "@prisma/client";
 import prismaClient from "../middleware/prisma";
 import logger from "../utils/logger.util";
-import { getWalletOutput } from "../models/walletOutput.model";
+import { getAddressOutput } from "../models/addressOutput.model";
 
 const prisma = prismaClient
 
-export async function createWallet(userid: string, body: any) {
+export async function createAddress(userid: string, body: any) {
   const data = {
     ...body,
     userId: userid
   }
   try {
-    return await prisma.wallet.create({
+    return await prisma.address.create({
       data: data,
       select: {
-        ...getWalletOutput
+        ...getAddressOutput
       }
     });
   }
   catch  (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      logger.error(`Prisma encountered an error creating wallet: ${e} | body sent: ${body}`)
+      logger.error(`Prisma encountered an error creating address: ${e} | body sent: ${body}`)
       throw e
     }
   }
 }
 
-export async function getWallet(userid: string, _id: string) {
-  return await prisma.wallet.findFirst({
+export async function getAddress(userid: string, _id: string) {
+  return await prisma.address.findFirst({
     where: {
       id: _id,
       userId: userid,
       deleted: false
     },
     select: {
-      ...getWalletOutput
+      ...getAddressOutput
     }
   })
 }
 
-export async function getAllWallets(userid: string) {
-  return await prisma.wallet.findMany({
+export async function getAllAddresses(userid: string) {
+  return await prisma.address.findMany({
     where: {
       userId: userid,
       deleted: false
     },
     select: {
-      ...getWalletOutput
+      ...getAddressOutput
     }
   })
 }
 
-export async function updateWallet(_id: string, body: any) {
+export async function updateAddress(_id: string, body: any) {
   try{
-    return await prisma.wallet.update({
+    return await prisma.address.update({
         where: {
             id: _id
           },
@@ -61,20 +61,20 @@ export async function updateWallet(_id: string, body: any) {
             ...body
           },
           select: {
-            ...getWalletOutput
+            ...getAddressOutput
           }
     })
   }
   catch  (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      logger.error(`Prisma encountered an error updating wallet: ${e} | body sent: ${body}`)
+      logger.error(`Prisma encountered an error updating address: ${e} | body sent: ${body}`)
       throw e
     }
   }
 }
 
-export async function deleteWallet(_id: string) {
-  return await prisma.wallet.update({
+export async function deleteAddress(_id: string) {
+  return await prisma.address.update({
     where: {
       id: _id
     },

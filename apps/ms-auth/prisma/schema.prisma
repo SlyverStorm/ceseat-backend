@@ -41,6 +41,7 @@ model User {
 
   sessions Session[]
   wallets Wallet[]
+  address Address[]
 
   deleted Boolean @default(false)
   
@@ -83,7 +84,7 @@ model Wallet {
   expirationMonth String @db.VarChar(2)
   expirationYear String @db.VarChar(2)
   title String @db.VarChar(35)
-  designation String @db.VarChar(70) @default("Nouvelle carte")
+  designation String @db.VarChar(70) @default("") //@default("Nouvelle carte")
 
   deleted Boolean @default(false)
 
@@ -91,30 +92,19 @@ model Wallet {
   updatedAt DateTime @updatedAt
 }
 
+model Address {
+  id String @id @default(cuid())
 
+  user User @relation(fields: [userId], references: [id])
+  userId String
 
-// model Post {
-//   id        Int      @id @default(autoincrement())
-  
-  
-//   title     String   @db.VarChar(255)
-//   content   String?
-//   published Boolean  @default(false)
-//   author    User     @relation(fields: [authorId], references: [id])
-//   authorId  Int
-// }
+  designation String @db.VarChar(70) @default("") //@default("Nouvelle adresse")
+  label String @db.VarChar(60)
+  longitude Float @db.Float()
+  latitude Float @db.Float()
 
-// model Profile {
-//   id     Int     @id @default(autoincrement())
-//   bio    String?
-//   user   User    @relation(fields: [userId], references: [id])
-//   userId Int     @unique
-// }
+  deleted Boolean @default(false)
 
-// model User {
-//   id      Int      @id @default(autoincrement())
-//   email   String   @unique
-//   name    String?
-//   posts   Post[]
-//   profile Profile?
-// }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

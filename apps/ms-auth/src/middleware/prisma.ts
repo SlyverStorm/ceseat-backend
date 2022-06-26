@@ -31,8 +31,18 @@ prismaClient.$use(async (params, next) => {
 prismaClient.$use(async (params, next) => {
     
     if (params.action === "create" && params.model === "Wallet") {
-        let session = params.args.data;
-        session.id = `wallet_${idGenerator()}`;
+        let wallet = params.args.data;
+        wallet.id = `wallet_${idGenerator()}`;
+    }
+    return await next(params);
+});
+
+//Address Id generation middleware
+prismaClient.$use(async (params, next) => {
+    
+    if (params.action === "create" && params.model === "Address") {
+        let address = params.args.data;
+        address.id = `address_${idGenerator()}`;
     }
     return await next(params);
 });

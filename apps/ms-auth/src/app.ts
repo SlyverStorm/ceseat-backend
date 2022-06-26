@@ -15,12 +15,12 @@ const appName = config.get<number>("context.appName");
 const appVersion = config.get<number>("context.version");
 logger.info(`Starting ${appName} V${appVersion} ...`);
 
-const whitelist = [
-    'http://localhost:4000',
-    'http://localhost:4001',
-    'http://localhost:4002',
-    'http://localhost:4003',
-  ];
+// const whitelist = [
+//     'http://localhost:4000',
+//     'http://localhost:4001',
+//     'http://localhost:4002',
+//     'http://localhost:4003',
+//   ];
 
 //Creating express app
 const app = express();
@@ -28,14 +28,15 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    credentials: true,
-    origin: function (origin, callback) {
-      if (typeof origin === 'string' && whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    }
+    origin: '*',
+    // credentials: true,
+    // origin: function (origin, callback) {
+    //   if (typeof origin === 'string' && whitelist.indexOf(origin) !== -1) {
+    //     callback(null, true);
+    //   } else {
+    //     callback(new Error('Not allowed by CORS'));
+    //   }
+    // }
 }));
 app.use(requestLogger);
 app.use(deserializeUser);

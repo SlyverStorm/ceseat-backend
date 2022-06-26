@@ -8,6 +8,8 @@ import { createSessionHandler, deleteSessionHandler, getAllSessionsHandler, getS
 import requireUser from "./middleware/requireUser";
 import { createWalletHandler, deleteWalletHandler, getAllWalletsHandler, getWalletHandler, updateWalletHandler } from "./controllers/wallet.controller";
 import { createWalletSchema, deleteWalletSchema, getWalletSchema, updateWalletSchema } from "./schemas/wallet.schema";
+import { createAddressHandler, deleteAddressHandler, getAddressHandler, getAllAddressesHandler, updateAddressHandler } from "./controllers/address.controller";
+import { createAddressSchema, deleteAddressSchema, getAddressSchema, updateAddressSchema } from "./schemas/address.schema";
 
 function routes(app: Express) {
 
@@ -47,11 +49,11 @@ function routes(app: Express) {
     app.get("/sessions/verify/technical", requireUser("technical"), OK)      //OK!
 
     // //Users Addresses related self requests
-    // app.post("/users/adresses/me", requireUser("customer"), WIPHandle)
-    // app.get("/users/adresses/me", requireUser("customer"), WIPHandle)
-    // app.get("/users/adresses/me/:addressid", requireUser("customer"), WIPHandle)
-    // app.put("/users/adresses/me/:addressid", requireUser("customer"), WIPHandle)
-    // app.delete("/users/adresses/me/:addressid", requireUser("customer"), WIPHandle)
+    app.post("/users/addresses/me", requireUser("customer"), validateRessource(createAddressSchema), createAddressHandler)
+    app.get("/users/addresses/me", requireUser("customer"), getAllAddressesHandler)
+    app.get("/users/addresses/me/:addressid", requireUser("customer"), validateRessource(getAddressSchema), getAddressHandler)
+    app.put("/users/adrdesses/me/:addressid", requireUser("customer"), validateRessource(updateAddressSchema), updateAddressHandler)
+    app.delete("/users/addresses/me/:addressid", requireUser("customer"), validateRessource(deleteAddressSchema), deleteAddressHandler)
 
     // //Users Wallets related self requests (only self)
     app.post("/users/wallets/me", requireUser("customer"), validateRessource(createWalletSchema), createWalletHandler)
