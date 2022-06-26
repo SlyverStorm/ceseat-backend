@@ -6,11 +6,12 @@ import { upload } from "./middleware/imageUpload";
 import { createSessionSchema } from "./schemas/session.schema";
 import { createSessionHandler, deleteSessionHandler, getAllSessionsHandler, getSessionsHandler } from "./controllers/session.controller";
 import requireUser from "./middleware/requireUser";
+import { createWalletHandler, deleteWalletHandler, getAllWalletsHandler, getWalletHandler, updateWalletHandler } from "./controllers/wallet.controller";
 
 function routes(app: Express) {
 
      // //User Image CDN
-     app.get("/users/images/:img", getUserImageHandler) //OK! unless dockerized
+     app.get("/users/images/:img", getUserImageHandler) //OK!
 
     // //Basic user request (self information)
     app.get("/users/me", requireUser("all"), (req: Request<GetUserInput["params"]>, res) => getUserHandler(req, res));                                  //OK!
@@ -52,12 +53,11 @@ function routes(app: Express) {
     // app.delete("/users/adresses/me/:addressid", requireUser("customer"), WIPHandle)
 
     // //Users Wallets related self requests (only self)
-    // app.post("/users/wallets/me", requireUser("customer"), WIPHandle)
-    // app.get("/users/wallets/me", requireUser("customer"), WIPHandle)
-    // //app.get("/users/wallets/me/:walletid", requireUser("customer"), WIPHandle) -> not useful
-    // //app.put("/users/wallets/me/:walletid", requireUser("customer"), WIPHandle) -> not useful
-    // app.delete("/users/wallets/me/:walletid", requireUser("customer"), WIPHandle)
-
+    app.post("/users/wallets/me", requireUser("customer"), createWalletHandler)
+    app.get("/users/wallets/me", requireUser("customer"), getAllWalletsHandler)
+    app.get("/users/wallets/me/:walletid", requireUser("customer"), getWalletHandler) //-> not useful
+    app.put("/users/wallets/me/:walletid", requireUser("customer"), updateWalletHandler) //-> not useful
+    app.delete("/users/wallets/me/:walletid", requireUser("customer"), deleteWalletHandler)
 }
 
 async function WIPHandle(req: Request, res: Response) {

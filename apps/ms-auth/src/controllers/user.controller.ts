@@ -9,7 +9,7 @@ import { createSession } from "../services/session.service";
 import { signJwt } from "../utils/jwt.util";
 import { createReferer } from "../services/referer.service";
 
-//User creation handler for commercial users
+//User creation handler
 export async function createUserHandler(
     req: Request<{}, {}, CreateUserInput["body"]>, 
     res: Response,

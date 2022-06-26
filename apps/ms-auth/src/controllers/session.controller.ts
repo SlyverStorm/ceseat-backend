@@ -64,7 +64,8 @@ export async function createSessionHandler(
         name: user.name,
         surname: user.surname,
         email: user.email,
-        image: user.image
+        image: user.image,
+        phone: user.phone
     })
     //res.send({accessToken, refreshToken, roleId: user.roleId})
 }
