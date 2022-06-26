@@ -10,7 +10,7 @@ export const adminUser = {
     name: "admin",
     surname: "admin",
     email: "admin@ceseat.com",
-    password: "admin",
+    password: "adminadmin",
     phone: "0566666666",
     roleId: 5,
     refererCode: "admin"
@@ -20,7 +20,7 @@ export const commUser = {
     name: "comm",
     surname: "comm",
     email: "commercial@ceseat.com",
-    password: "admin",
+    password: "commercial",
     phone: "0577777777",
     roleId: 4,
     refererCode: "comm"
