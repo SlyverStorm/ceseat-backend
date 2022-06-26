@@ -33,9 +33,9 @@ function routes(app: Express) {
     app.post("/users/register/restaurant", upload.single("image"), validateRessource(createUserSchema), (req, res) => createUserHandler(req, res, 3));  //OK!
 
     // //User log in sessions requests
-    app.post("/sessions", validateRessource(createSessionSchema), createSessionHandler);    //OK!
-    app.get("/sessions/me", requireUser("all"), getSessionsHandler);                        //OK!
-    app.delete("/sessions/me", requireUser("all"), deleteSessionHandler);                   //OK!
+    app.post("/users/sessions", validateRessource(createSessionSchema), createSessionHandler);    //OK!
+    app.get("/users/sessions/me", requireUser("all"), getSessionsHandler);                        //OK!
+    app.delete("/users/sessions/me", requireUser("all"), deleteSessionHandler);                   //OK!
 
     // //Sessions logs from user accessible from technical users
     app.get("/sessions", requireUser("technical"), getAllSessionsHandler);   //OK!
@@ -63,9 +63,9 @@ function routes(app: Express) {
     app.delete("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(deleteWalletSchema), deleteWalletHandler)
 }
 
-async function WIPHandle(req: Request, res: Response) {
-    res.send("Route currently in Work in progress")
-}
+// async function WIPHandle(req: Request, res: Response) {
+//     res.send("Route currently in Work in progress")
+// }
 
 function OK(req: Request, res: Response) {
     res.sendStatus(200)
