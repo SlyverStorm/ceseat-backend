@@ -27,6 +27,16 @@ prismaClient.$use(async (params, next) => {
     return await next(params);
 });
 
+//Wallet Id generation middleware
+prismaClient.$use(async (params, next) => {
+    
+    if (params.action === "create" && params.model === "Wallet") {
+        let session = params.args.data;
+        session.id = `wallet_${idGenerator()}`;
+    }
+    return await next(params);
+});
+
 //Password encrypt middleware
 prismaClient.$use(async (params, next) => {
     

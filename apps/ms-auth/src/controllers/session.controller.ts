@@ -57,8 +57,12 @@ export async function createSessionHandler(
     );
 
     //Return access and refresh token
-    res.setHeader("x-access-token", accessToken);
-    res.setHeader("x-refresh-token", refreshToken);
+    res.cookie("access-token", 'Bearer ' + accessToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    })
+    res.cookie("refresh-token", 'Bearer ' + refreshToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    })
     return res.send({
         roleId: user.roleId,
         name: user.name,
@@ -102,6 +106,8 @@ export async function deleteSessionHandler(req: Request, res: Response) {
     const sessionId = res.locals.user.session;
     await deleteSession(sessionId);
   
+    res.clearCookie("access-token");
+    res.clearCookie("refresh-token");
     return res.send({
       accessToken: null,
       refreshToken: null,

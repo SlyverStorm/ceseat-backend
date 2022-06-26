@@ -8,6 +8,7 @@ import cors from "cors";
 import deserializeUser from "./middleware/deserializeUser"
 import prisma from "./middleware/prisma";
 import requestLogger from "./middleware/requestLogger";
+import cookieParser from "cookie-parser";
 
 //Displaying context data (app name and version) from configuration :
 const appName = config.get<number>("context.appName");
@@ -18,7 +19,7 @@ logger.info(`Starting ${appName} V${appVersion} ...`);
 const app = express();
 //Using express json parser to handle request body handling
 app.use(express.json());
-//app.use(express.);
+app.use(cookieParser());
 app.use(cors({
     origin: '*'
 }));

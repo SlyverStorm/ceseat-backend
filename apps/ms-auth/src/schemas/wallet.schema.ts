@@ -1,6 +1,6 @@
 import { object, number, string, TypeOf } from "zod";
 
-const userIdRegExp = /^user_\w+/;
+const walletIdRegExp = /^wallet_\w+/;
 const cardNumberRegExp = /^\d{16}$/;
 const expirationRegExp = /^\d{2}$/;
 
@@ -74,7 +74,7 @@ const params = {
     params: object({
         walletid: string({
             required_error: "Identifiant de wallet est requis"
-        }).regex(userIdRegExp, "Identifiant de wallet incorrect")
+        }).regex(walletIdRegExp, "Identifiant de wallet incorrect")
     }).strict()
 };
 

@@ -80,8 +80,12 @@ export async function createUserHandler(
     );
 
     //Return access and refresh token
-    res.setHeader("x-access-token", accessToken);
-    res.setHeader("x-refresh-token", refreshToken);
+    res.cookie("access-token", 'Bearer ' + accessToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    })
+    res.cookie("refresh-token", 'Bearer ' + refreshToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    })
     return res.send({...user, id: undefined, roleId: undefined});
 }
 
@@ -171,6 +175,11 @@ export async function deleteUserHandler(
     
         const deletion = await deleteUser(_id, user.email, user.phone);
         if (deletion.image != null) deleteImage(deletion.image)
+
+        if (self) {
+            res.clearCookie("access-token");
+            res.clearCookie("refresh-token");
+        }
         return res.send({
             message: "User was deleted with success",
             deletedId: deletion.id

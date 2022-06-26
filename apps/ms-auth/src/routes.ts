@@ -7,6 +7,7 @@ import { createSessionSchema } from "./schemas/session.schema";
 import { createSessionHandler, deleteSessionHandler, getAllSessionsHandler, getSessionsHandler } from "./controllers/session.controller";
 import requireUser from "./middleware/requireUser";
 import { createWalletHandler, deleteWalletHandler, getAllWalletsHandler, getWalletHandler, updateWalletHandler } from "./controllers/wallet.controller";
+import { createWalletSchema, deleteWalletSchema, getWalletSchema, updateWalletSchema } from "./schemas/wallet.schema";
 
 function routes(app: Express) {
 
@@ -53,11 +54,11 @@ function routes(app: Express) {
     // app.delete("/users/adresses/me/:addressid", requireUser("customer"), WIPHandle)
 
     // //Users Wallets related self requests (only self)
-    app.post("/users/wallets/me", requireUser("customer"), createWalletHandler)
+    app.post("/users/wallets/me", requireUser("customer"), validateRessource(createWalletSchema), createWalletHandler)
     app.get("/users/wallets/me", requireUser("customer"), getAllWalletsHandler)
-    app.get("/users/wallets/me/:walletid", requireUser("customer"), getWalletHandler) //-> not useful
-    app.put("/users/wallets/me/:walletid", requireUser("customer"), updateWalletHandler) //-> not useful
-    app.delete("/users/wallets/me/:walletid", requireUser("customer"), deleteWalletHandler)
+    app.get("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(getWalletSchema), getWalletHandler) //-> not useful
+    app.put("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(updateWalletSchema), updateWalletHandler) //-> not useful
+    app.delete("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(deleteWalletSchema), deleteWalletHandler)
 }
 
 async function WIPHandle(req: Request, res: Response) {

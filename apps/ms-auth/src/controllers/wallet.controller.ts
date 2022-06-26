@@ -16,6 +16,7 @@ export async function createWalletHandler(
     const userid = res.locals.user.id;
     if (!userid) return res.status(404).send("User id not found");
 
+    logger.debug("Checking user: " + userid);
     //Check if user exists
     let user;
     try {
@@ -26,6 +27,7 @@ export async function createWalletHandler(
     }
     if (!user) return res.sendStatus(404)
 
+    logger.debug("Creating wallet for user: " + userid);
     //Create new wallet info for the user
     let wallet;
     try {
@@ -39,7 +41,7 @@ export async function createWalletHandler(
 }
 
 export async function getWalletHandler(
-    req: Request<{}, {}, GetWalletInput["params"]>,
+    req: Request<GetWalletInput["params"], {}, {}>,
     res: Response,
 ) {
     const userid = res.locals.user.id;
@@ -176,7 +178,7 @@ export async function deleteWalletHandler(
     }
     if (!deletion) return res.sendStatus(500)
     return res.send({
-        message: "User was deleted with success",
+        message: "Wallet was deleted with success",
         deletedId: deletion.id
     });
 }
