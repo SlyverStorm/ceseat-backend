@@ -16,6 +16,7 @@ export async function createSessionHandler(
 
     //Validate the user's password
     const validation = await validateUserCredentials(sessionInput);
+    if(validation.suspension) return res.status(403).send("User is suspended");
     if(!validation.valid) return res.status(401).send("Invalid email or password");
 
     //Create session

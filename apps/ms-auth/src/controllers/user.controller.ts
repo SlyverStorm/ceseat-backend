@@ -142,7 +142,7 @@ export async function updateUserHandler(
     //logger.debug(`Updating user from ${_id}...`)
     
     try {
-        const user = await getUser(_id, returnId);
+        const user = await getUser(_id, returnId, self);
         if (!user) return res.sendStatus(404); // 404: When user do not exist
         if (user.role.name === "commercial" || user.role.name === "technical") return res.sendStatus(403); // 403: When user has commercial or technical role
         if (req.file && user.image == null) update.image = req.file.filename // Handle when user created an account without an image

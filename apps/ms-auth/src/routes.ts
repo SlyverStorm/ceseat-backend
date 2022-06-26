@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
 import { createUserHandler, deleteUserHandler, getAllUsersHandler, getUserHandler, getUserImageHandler, updateUserHandler } from "./controllers/user.controller";
 import validateRessource from "./middleware/validateRessource";
-import { createUserSchema, deleteUserSchema, GetUserInput, getUserSchema, UpdateUserInput, updateUserSchema } from "./schemas/user.schema";
+import { commUpdateUserSchema, createUserSchema, deleteUserSchema, GetUserInput, getUserSchema, UpdateUserInput, updateUserSchema } from "./schemas/user.schema";
 import { upload } from "./middleware/imageUpload";
 import { createSessionSchema } from "./schemas/session.schema";
 import { createSessionHandler, deleteSessionHandler, getAllSessionsHandler, getSessionsHandler } from "./controllers/session.controller";
@@ -22,10 +22,10 @@ function routes(app: Express) {
     app.delete("/users/me", requireUser("all"), (req: Request<GetUserInput["params"]>, res) => deleteUserHandler(req, res));                            //OK!
 
     //Commercial service related user requests
-    app.get("/users/:userid", requireUser("commercial"), validateRessource(getUserSchema), (req: Request<GetUserInput["params"]>, res) => getUserHandler(req, res, true, false));                                   //OK!
-    app.get("/users", requireUser("commercial"), getAllUsersHandler);                                                                                                                                               //OK!
-    app.put("/users/:userid", requireUser("commercial"), upload.single("image"), validateRessource(updateUserSchema), (req: Request<UpdateUserInput["params"]>, res) => updateUserHandler(req, res, true, false));  //OK!
-    app.delete("/users/:userid", requireUser("commercial"), validateRessource(deleteUserSchema), (req: Request<GetUserInput["params"]>, res) => deleteUserHandler(req, res, false));                                //OK!
+    app.get("/users/:userid", requireUser("commercial"), validateRessource(getUserSchema), (req: Request<GetUserInput["params"]>, res) => getUserHandler(req, res, true, false));                                       //OK!
+    app.get("/users", requireUser("commercial"), getAllUsersHandler);                                                                                                                                                   //OK!
+    app.put("/users/:userid", requireUser("commercial"), upload.single("image"), validateRessource(commUpdateUserSchema), (req: Request<UpdateUserInput["params"]>, res) => updateUserHandler(req, res, true, false));  //OK!
+    app.delete("/users/:userid", requireUser("commercial"), validateRessource(deleteUserSchema), (req: Request<GetUserInput["params"]>, res) => deleteUserHandler(req, res, false));                                    //OK!
 
     // //User register request
     app.post("/users/register/customer", upload.single("image"), validateRessource(createUserSchema), (req, res) => createUserHandler(req, res, 1));    //OK!
