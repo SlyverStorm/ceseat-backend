@@ -1,35 +1,38 @@
-import mongoose, { Types } from "mongoose";
-import { customAlphabet } from "nanoid";
-
-const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 10);
+import mongoose from "mongoose";
+import { Types } from "mongoose";
 
 export interface RestaurantDocument extends mongoose.Document {
-    restaurantId?: string;
     name: string;
-    address: string;
-    description?: string;
     image?: string | null;
+    description?: string;
+    address: {
+        label: string;
+        longitude: number;
+        latitude: number;
+    }
     userId: string;
-    deletedAt?: string | null
+    deletedAt?: Date | null;
 }
 
-const restaurantSchema = new mongoose.Schema({
-    restaurantId: {
-        type: String, 
-        required: true,
-        unique: true,
-        default: () => `restaurant_${nanoid()}`,
-    },
+const RestaurantSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    address: {type: String, required: true},
-    description: {type: String, required: false},
-    image: {type: String, required: false},
-    userId: {type: String, required: false},
-    deletedAt: {type: String, required: false, default:  null}
+    image: {type: String, required: false, default: null},
+    description: {type: String, required: false, default: ""},
+    address: {
+        type: Object,
+        required: true,
+        properties: {
+            label: {type: String, required: true},
+            longitude: {type: Number, required: true},
+            latitude: {type: Number, required: true},
+        }
+    },
+    userId: {type: String, required: true},
+    deletedAt: {type: Date, required: false, default: null},
 },{
-    timestamps:true
+    timestamps: true
 });
 
-const RestaurantModel = mongoose.model<RestaurantDocument>("Restaurant", restaurantSchema);
+const RestaurantModel = mongoose.model<RestaurantDocument>("Restaurant", RestaurantSchema);
 
 export default RestaurantModel;

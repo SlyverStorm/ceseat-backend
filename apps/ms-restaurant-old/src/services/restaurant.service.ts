@@ -1,7 +1,9 @@
-import { DocumentDefinition, FilterQuery, now, QueryOptions, UpdateQuery } from "mongoose";
+import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mongoose";
 import RestaurantModel, { RestaurantDocument } from "../models/restaurant.model";
 
-export async function createRestaurant(input: DocumentDefinition<RestaurantDocument>) {
+export async function createRestaurant(
+    input: DocumentDefinition<Omit<RestaurantDocument, "createdAt" | "updatedAt">>
+) {
     return RestaurantModel.create(input);
 }
 
@@ -13,10 +15,9 @@ export async function getRestaurant(
 }
 
 export async function getAllRestaurants(
-    query: FilterQuery<RestaurantDocument>,
     options: QueryOptions = {lean: true}
 ) {
-    return RestaurantModel.find({...query, deletedAt: null}, {}, options);
+    return RestaurantModel.find({deletedAt: null}, {}, options);
 }
 
 export async function updateRestaurant(
@@ -24,11 +25,11 @@ export async function updateRestaurant(
     update: UpdateQuery<RestaurantDocument>,
     options: QueryOptions
 ) {
-    return RestaurantModel.findOneAndUpdate({...query, deletedAt: null}, update, options);
+    return RestaurantModel.findOneAndUpdate(query, update, options);
 }
 
 export async function deleteRestaurant(
     query: FilterQuery<RestaurantDocument>
 ) {
-    return RestaurantModel.findOneAndUpdate({...query, deletedAt: null}, {deletedAt: new Date(now())});
+    return RestaurantModel.deleteOne(query);
 }

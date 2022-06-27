@@ -1,0 +1,8 @@
+{
+    "context": {
+        "appName": "ceseat-ms-template-PROD"
+    },
+    "logger": {
+        "logLevel": "info"
+    }
+}
