@@ -35,10 +35,13 @@ model User {
   role Role @relation(fields: [roleId], references: [id])
   roleId Int @default(1)
 
+  refererCode String @db.VarChar(8) @unique
   refererUser Referent[] @relation("refered")
   ReferedUsers Referent[] @relation("referer")
 
   sessions Session[]
+  wallets Wallet[]
+  address Address[]
 
   deleted Boolean @default(false)
   
@@ -65,35 +68,43 @@ model Session {
   userId String
 
   valid Boolean @default(true)
-  userAgent String @db.VarChar(100)
+  userAgent String @db.VarChar(255)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model Wallet {
+  id String @id @default(cuid())
 
-
-// model Post {
-//   id        Int      @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId String
   
-  
-//   title     String   @db.VarChar(255)
-//   content   String?
-//   published Boolean  @default(false)
-//   author    User     @relation(fields: [authorId], references: [id])
-//   authorId  Int
-// }
+  cardNumber String @db.VarChar(16)
+  expirationMonth String @db.VarChar(2)
+  expirationYear String @db.VarChar(2)
+  title String @db.VarChar(35)
+  designation String @db.VarChar(70) @default("") //@default("Nouvelle carte")
 
-// model Profile {
-//   id     Int     @id @default(autoincrement())
-//   bio    String?
-//   user   User    @relation(fields: [userId], references: [id])
-//   userId Int     @unique
-// }
+  deleted Boolean @default(false)
 
-// model User {
-//   id      Int      @id @default(autoincrement())
-//   email   String   @unique
-//   name    String?
-//   posts   Post[]
-//   profile Profile?
-// }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Address {
+  id String @id @default(cuid())
+
+  user User @relation(fields: [userId], references: [id])
+  userId String
+
+  designation String @db.VarChar(70) @default("") //@default("Nouvelle adresse")
+  label String @db.VarChar(60)
+  longitude Float @db.Float()
+  latitude Float @db.Float()
+
+  deleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

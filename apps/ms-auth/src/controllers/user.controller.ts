@@ -5,8 +5,11 @@ import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "../ser
 import { deleteImage, updateImage, getImage } from "../utils/images.util";
 import path from "path";
 import config from "config";
+import { createSession } from "../services/session.service";
+import { signJwt } from "../utils/jwt.util";
+import { createReferer } from "../services/referer.service";
 
-//User creation handler for commercial users
+//User creation handler
 export async function createUserHandler(
     req: Request<{}, {}, CreateUserInput["body"]>, 
     res: Response,
@@ -23,16 +26,67 @@ export async function createUserHandler(
         filepath = null;
     }
 
-    //logger.debug(`Creating new user from request...`)
+    //Create new user
+    let user;
     try {
-        const user = await createUser(body, filepath);
-        return res.send(user);
+        user = await createUser(body, filepath);
+        
     }
     catch(e:any){
         if(req.file) deleteImage(req.file.filename);
         if (e.status) return res.status(e.status).send(e);
         return res.sendStatus(500);
     }
+    if (!user) return res.sendStatus(500)
+
+    //Create referer if code is provided
+    if (body.refererCode) {
+        user = await createReferer(body.refererCode, user)
+    }
+
+    //Create session
+    let session
+    try {
+        session = await createSession(user.id, req.get("user-agent") || "")
+    }
+    catch (e) {
+        return res.status(500).send(e)
+    }
+
+    //Create an access token
+    const accessToken = signJwt(
+        {
+            id: user.id,
+            session: session.id,
+            role: user.roleId
+        },
+        "accessTokenPrivateKey",
+        {
+            expiresIn: config.get<string>("jwt.accessTokenTtl")
+        }
+    );
+
+    //Create a refresh token
+    const refreshToken = signJwt(
+        {
+            id: user.id,
+            session: session.id,
+            role: user.roleId
+        },
+        "refreshTokenPrivateKey",
+        {
+            expiresIn: config.get<string>("jwt.refreshTokenTtl")
+        }
+    );
+
+    //Return access and refresh token
+    res.cookie("access-token", 'Bearer ' + accessToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    })
+    res.cookie("refresh-token", 'Bearer ' + refreshToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    })
+    return res.send({...user, id: undefined, roleId: undefined});
 }
 
 export async function getUserHandler(
@@ -88,7 +142,7 @@ export async function updateUserHandler(
     //logger.debug(`Updating user from ${_id}...`)
     
     try {
-        const user = await getUser(_id, returnId);
+        const user = await getUser(_id, returnId, self);
         if (!user) return res.sendStatus(404); // 404: When user do not exist
         if (user.role.name === "commercial" || user.role.name === "technical") return res.sendStatus(403); // 403: When user has commercial or technical role
         if (req.file && user.image == null) update.image = req.file.filename // Handle when user created an account without an image
@@ -121,6 +175,11 @@ export async function deleteUserHandler(
     
         const deletion = await deleteUser(_id, user.email, user.phone);
         if (deletion.image != null) deleteImage(deletion.image)
+
+        if (self) {
+            res.clearCookie("access-token");
+            res.clearCookie("refresh-token");
+        }
         return res.send({
             message: "User was deleted with success",
             deletedId: deletion.id

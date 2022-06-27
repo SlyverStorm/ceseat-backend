@@ -16,6 +16,7 @@ export async function createSessionHandler(
 
     //Validate the user's password
     const validation = await validateUserCredentials(sessionInput);
+    if(validation.suspension) return res.status(403).send("User is suspended");
     if(!validation.valid) return res.status(401).send("Invalid email or password");
 
     //Create session
@@ -57,14 +58,19 @@ export async function createSessionHandler(
     );
 
     //Return access and refresh token
-    res.setHeader("x-access-token", accessToken);
-    res.setHeader("x-refresh-token", refreshToken);
+    res.cookie("access-token", 'Bearer ' + accessToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    })
+    res.cookie("refresh-token", 'Bearer ' + refreshToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+    })
     return res.send({
         roleId: user.roleId,
         name: user.name,
         surname: user.surname,
         email: user.email,
-        image: user.image
+        image: user.image,
+        phone: user.phone
     })
     //res.send({accessToken, refreshToken, roleId: user.roleId})
 }
@@ -101,6 +107,8 @@ export async function deleteSessionHandler(req: Request, res: Response) {
     const sessionId = res.locals.user.session;
     await deleteSession(sessionId);
   
+    res.clearCookie("access-token");
+    res.clearCookie("refresh-token");
     return res.send({
       accessToken: null,
       refreshToken: null,

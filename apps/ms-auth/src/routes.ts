@@ -1,16 +1,20 @@
 import { Express, Request, Response } from "express";
 import { createUserHandler, deleteUserHandler, getAllUsersHandler, getUserHandler, getUserImageHandler, updateUserHandler } from "./controllers/user.controller";
 import validateRessource from "./middleware/validateRessource";
-import { createUserSchema, deleteUserSchema, GetUserInput, getUserSchema, UpdateUserInput, updateUserSchema } from "./schemas/user.schema";
+import { commUpdateUserSchema, createUserSchema, deleteUserSchema, GetUserInput, getUserSchema, UpdateUserInput, updateUserSchema } from "./schemas/user.schema";
 import { upload } from "./middleware/imageUpload";
 import { createSessionSchema } from "./schemas/session.schema";
 import { createSessionHandler, deleteSessionHandler, getAllSessionsHandler, getSessionsHandler } from "./controllers/session.controller";
 import requireUser from "./middleware/requireUser";
+import { createWalletHandler, deleteWalletHandler, getAllWalletsHandler, getWalletHandler, updateWalletHandler } from "./controllers/wallet.controller";
+import { createWalletSchema, deleteWalletSchema, getWalletSchema, updateWalletSchema } from "./schemas/wallet.schema";
+import { createAddressHandler, deleteAddressHandler, getAddressHandler, getAllAddressesHandler, updateAddressHandler } from "./controllers/address.controller";
+import { createAddressSchema, deleteAddressSchema, getAddressSchema, updateAddressSchema } from "./schemas/address.schema";
 
 function routes(app: Express) {
 
      // //User Image CDN
-     app.get("/users/images/:img", getUserImageHandler) //OK! unless dockerized
+     app.get("/users/images/:img", getUserImageHandler) //OK!
 
     // //Basic user request (self information)
     app.get("/users/me", requireUser("all"), (req: Request<GetUserInput["params"]>, res) => getUserHandler(req, res));                                  //OK!
@@ -18,10 +22,10 @@ function routes(app: Express) {
     app.delete("/users/me", requireUser("all"), (req: Request<GetUserInput["params"]>, res) => deleteUserHandler(req, res));                            //OK!
 
     //Commercial service related user requests
-    app.get("/users/:userid", requireUser("commercial"), validateRessource(getUserSchema), (req: Request<GetUserInput["params"]>, res) => getUserHandler(req, res, true, false));                                   //OK!
-    app.get("/users", requireUser("commercial"), getAllUsersHandler);                                                                                                                                               //OK!
-    app.put("/users/:userid", requireUser("commercial"), upload.single("image"), validateRessource(updateUserSchema), (req: Request<UpdateUserInput["params"]>, res) => updateUserHandler(req, res, true, false));  //OK!
-    app.delete("/users/:userid", requireUser("commercial"), validateRessource(deleteUserSchema), (req: Request<GetUserInput["params"]>, res) => deleteUserHandler(req, res, false));                                //OK!
+    app.get("/users/:userid", requireUser("commercial"), validateRessource(getUserSchema), (req: Request<GetUserInput["params"]>, res) => getUserHandler(req, res, true, false));                                       //OK!
+    app.get("/users", requireUser("commercial"), getAllUsersHandler);                                                                                                                                                   //OK!
+    app.put("/users/:userid", requireUser("commercial"), upload.single("image"), validateRessource(commUpdateUserSchema), (req: Request<UpdateUserInput["params"]>, res) => updateUserHandler(req, res, true, false));  //OK!
+    app.delete("/users/:userid", requireUser("commercial"), validateRessource(deleteUserSchema), (req: Request<GetUserInput["params"]>, res) => deleteUserHandler(req, res, false));                                    //OK!
 
     // //User register request
     app.post("/users/register/customer", upload.single("image"), validateRessource(createUserSchema), (req, res) => createUserHandler(req, res, 1));    //OK!
@@ -29,9 +33,9 @@ function routes(app: Express) {
     app.post("/users/register/restaurant", upload.single("image"), validateRessource(createUserSchema), (req, res) => createUserHandler(req, res, 3));  //OK!
 
     // //User log in sessions requests
-    app.post("/sessions", validateRessource(createSessionSchema), createSessionHandler);    //OK!
-    app.get("/sessions/me", requireUser("all"), getSessionsHandler);                        //OK!
-    app.delete("/sessions/me", requireUser("all"), deleteSessionHandler);                   //OK!
+    app.post("/users/sessions", validateRessource(createSessionSchema), createSessionHandler);    //OK!
+    app.get("/users/sessions/me", requireUser("all"), getSessionsHandler);                        //OK!
+    app.delete("/users/sessions/me", requireUser("all"), deleteSessionHandler);                   //OK!
 
     // //Sessions logs from user accessible from technical users
     app.get("/sessions", requireUser("technical"), getAllSessionsHandler);   //OK!
@@ -45,24 +49,23 @@ function routes(app: Express) {
     app.get("/sessions/verify/technical", requireUser("technical"), OK)      //OK!
 
     // //Users Addresses related self requests
-    // app.post("/users/adresses/me", requireUser("customer"), WIPHandle)
-    // app.get("/users/adresses/me", requireUser("customer"), WIPHandle)
-    // app.get("/users/adresses/me/:addressid", requireUser("customer"), WIPHandle)
-    // app.put("/users/adresses/me/:addressid", requireUser("customer"), WIPHandle)
-    // app.delete("/users/adresses/me/:addressid", requireUser("customer"), WIPHandle)
+    app.post("/users/addresses/me", requireUser("customer"), validateRessource(createAddressSchema), createAddressHandler)
+    app.get("/users/addresses/me", requireUser("customer"), getAllAddressesHandler)
+    app.get("/users/addresses/me/:addressid", requireUser("customer"), validateRessource(getAddressSchema), getAddressHandler)
+    app.put("/users/adrdesses/me/:addressid", requireUser("customer"), validateRessource(updateAddressSchema), updateAddressHandler)
+    app.delete("/users/addresses/me/:addressid", requireUser("customer"), validateRessource(deleteAddressSchema), deleteAddressHandler)
 
     // //Users Wallets related self requests (only self)
-    // app.post("/users/wallets/me", requireUser("customer"), WIPHandle)
-    // app.get("/users/wallets/me", requireUser("customer"), WIPHandle)
-    // //app.get("/users/wallets/me/:walletid", requireUser("customer"), WIPHandle) -> not useful
-    // //app.put("/users/wallets/me/:walletid", requireUser("customer"), WIPHandle) -> not useful
-    // app.delete("/users/wallets/me/:walletid", requireUser("customer"), WIPHandle)
-
+    app.post("/users/wallets/me", requireUser("customer"), validateRessource(createWalletSchema), createWalletHandler)
+    app.get("/users/wallets/me", requireUser("customer"), getAllWalletsHandler)
+    app.get("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(getWalletSchema), getWalletHandler) //-> not useful
+    app.put("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(updateWalletSchema), updateWalletHandler) //-> not useful
+    app.delete("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(deleteWalletSchema), deleteWalletHandler)
 }
 
-async function WIPHandle(req: Request, res: Response) {
-    res.send("Route currently in Work in progress")
-}
+// async function WIPHandle(req: Request, res: Response) {
+//     res.send("Route currently in Work in progress")
+// }
 
 function OK(req: Request, res: Response) {
     res.sendStatus(200)

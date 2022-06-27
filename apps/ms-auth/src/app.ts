@@ -8,19 +8,35 @@ import cors from "cors";
 import deserializeUser from "./middleware/deserializeUser"
 import prisma from "./middleware/prisma";
 import requestLogger from "./middleware/requestLogger";
+import cookieParser from "cookie-parser";
 
 //Displaying context data (app name and version) from configuration :
 const appName = config.get<number>("context.appName");
 const appVersion = config.get<number>("context.version");
 logger.info(`Starting ${appName} V${appVersion} ...`);
 
+// const whitelist = [
+//     'http://localhost:4000',
+//     'http://localhost:4001',
+//     'http://localhost:4002',
+//     'http://localhost:4003',
+//   ];
+
 //Creating express app
 const app = express();
 //Using express json parser to handle request body handling
 app.use(express.json());
-//app.use(express.);
+app.use(cookieParser());
 app.use(cors({
-    origin: '*'
+    origin: '*',
+    // credentials: true,
+    // origin: function (origin, callback) {
+    //   if (typeof origin === 'string' && whitelist.indexOf(origin) !== -1) {
+    //     callback(null, true);
+    //   } else {
+    //     callback(new Error('Not allowed by CORS'));
+    //   }
+    // }
 }));
 app.use(requestLogger);
 app.use(deserializeUser);

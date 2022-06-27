@@ -18,7 +18,8 @@ export async function createUser(body: any, imgpath: string | null) {
     return await prisma.user.create({
       data: data,
       select: {
-        ...getUserOutput
+        ...commGetUserOutput,
+        roleId: true
       }
     });
   }
@@ -39,14 +40,28 @@ export async function createUser(body: any, imgpath: string | null) {
   
 }
 
-export async function getUser(_id: string, returnId: boolean = false) {
+export async function getUser(_id: string, returnId: boolean = false, self: boolean = true) {
+
+    let whereArgs
+    if (self) {
+      whereArgs= {
+        id: _id,
+        deleted: false,
+        isSuspended: false
+      }
+    }
+    else {
+      whereArgs= {
+        id: _id,
+        deleted: false
+      }
+    }
 
     const outputSchema = returnId ? commGetUserOutput : getUserOutput
 
     return prisma.user.findFirst({
         where: {
-          id: _id,
-          deleted: false
+          ...whereArgs
         },
         select: {
           ...outputSchema
@@ -58,7 +73,8 @@ export async function getUser(_id: string, returnId: boolean = false) {
 export async function getAllUsers() {
     return await prisma.user.findMany({
       where: {
-        deleted: false
+        deleted: false,
+        //isSuspended: false
       },
       select: {
         ...commGetUserOutput
@@ -114,14 +130,17 @@ export async function deleteUser(_id: string, previousEmail: string, previousPho
 };
 
 export async function validateUserCredentials(credentials: CreateSessionInput["body"]/*email: string, password: string*/) {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: {
-      email: credentials.email
+      email: credentials.email,
+      deleted: false
     },
   });
-  if (!user) return { valid: false, user: null};
+  if (!user) return { valid: false, user: null, suspension: false };
+
+  if (user.isSuspended) return { valid: false, user: null, suspension: true };
 
   const isValid = await bcrypt.compare(credentials.password, user.password)
-  if(!isValid) return  {valid: isValid, user: null};
-  return {valid: isValid, user: user};
+  if(!isValid) return  {valid: isValid, user: null, suspension: false}
+  return {valid: isValid, user: user, suspension: false};
 };

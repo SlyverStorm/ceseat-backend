@@ -3,14 +3,16 @@ import bcrypt from "bcrypt";
 import { customAlphabet } from "nanoid";
 
 const prismaClient = new PrismaClient()
-const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 10);
+const idGenerator = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 10);
+const refererCodeGenerator = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8);
 
 //User Id generation middleware
 prismaClient.$use(async (params, next) => {
     
     if (params.action === "create" && params.model === "User") {
         let user = params.args.data;
-        user.id = `user_${nanoid()}`;
+        user.id = `user_${idGenerator()}`;
+        user.refererCode = `${refererCodeGenerator()}`;
     }
     return await next(params);
 });
@@ -20,7 +22,27 @@ prismaClient.$use(async (params, next) => {
     
     if (params.action === "create" && params.model === "Session") {
         let session = params.args.data;
-        session.id = `session_${nanoid()}`;
+        session.id = `session_${idGenerator()}`;
+    }
+    return await next(params);
+});
+
+//Wallet Id generation middleware
+prismaClient.$use(async (params, next) => {
+    
+    if (params.action === "create" && params.model === "Wallet") {
+        let wallet = params.args.data;
+        wallet.id = `wallet_${idGenerator()}`;
+    }
+    return await next(params);
+});
+
+//Address Id generation middleware
+prismaClient.$use(async (params, next) => {
+    
+    if (params.action === "create" && params.model === "Address") {
+        let address = params.args.data;
+        address.id = `address_${idGenerator()}`;
     }
     return await next(params);
 });
