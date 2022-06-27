@@ -8,6 +8,7 @@ export const getUserOutput = {
     refererCode: true,
     role: {
       select: {
+        id: true,
         name: true
       }
     },
@@ -17,20 +18,23 @@ export const getUserOutput = {
           select: {
             name: true,
             surname: true,
+            createdAt: true
           }
         }
       }
     },
-    ReferedUsers: {
+    referedUsers: {
       select: {
         newUser: {
           select: {
             name: true,
             surname: true,
+            createdAt: true
           }
         }
       }
-    }
+    },
+    createdAt: true
 }
 
 export const commGetUserOutput = {
@@ -43,6 +47,7 @@ export const commGetUserOutput = {
   refererCode: true,
   role: {
     select: {
+      id: true,
       name: true
     }
   },
@@ -52,19 +57,22 @@ export const commGetUserOutput = {
         select: {
           name: true,
           surname: true,
+          createdAt: true
         }
       }
     }
   },
-  ReferedUsers: {
+  referedUsers: {
     select: {
       newUser: {
         select: {
           name: true,
           surname: true,
+          createdAt: true
         }
       }
     }
   },
-  isSuspended: true
+  isSuspended: true,
+  createdAt: true
 }

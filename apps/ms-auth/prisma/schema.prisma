@@ -37,7 +37,7 @@ model User {
 
   refererCode String @db.VarChar(8) @unique
   refererUser Referent[] @relation("refered")
-  ReferedUsers Referent[] @relation("referer")
+  referedUsers Referent[] @relation("referer")
 
   sessions Session[]
   wallets Wallet[]
