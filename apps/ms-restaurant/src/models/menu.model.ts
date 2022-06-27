@@ -3,15 +3,15 @@ import { Types } from "mongoose";
 
 export interface MenuDocument extends mongoose.Document {
     name: string;
-    image: string | null;
-    description: string;
+    image?: string | null;
+    description?: string;
     price: number;
-    isAvailable: boolean;
-    content: {
+    isAvailable?: boolean;
+    content?: [{
         sectionName: string;
         articles: [Types.ObjectId];
-    },
-    deletedAt: Date | null;
+    }],
+    deletedAt?: Date | null;
 }
 
 const MenuSchema = new mongoose.Schema({
@@ -22,10 +22,10 @@ const MenuSchema = new mongoose.Schema({
     isAvailable: {type: Boolean, required: false, default: false},
     content: [{
         type: Object,
-        required: true,
+        required: false,
         properties: {
             sectionName: {type: String, required: true},
-            articles: [{type: Types.ObjectId, ref: "Article"}]
+            articles: [{type: Types.ObjectId, ref: "Article", required: true}],
         }
     }],
     restaurantId: {type: Types.ObjectId, ref: "Restaurant", required: true},

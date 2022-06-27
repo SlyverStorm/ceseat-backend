@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 export interface ArticleDocument extends mongoose.Document {
     name: string;
     image?: string | null;
-    description: string;
+    description?: string;
     price: number;
     isAvailable?: boolean;
     restaurantId: Types.ObjectId;

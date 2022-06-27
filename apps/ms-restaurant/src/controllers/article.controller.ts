@@ -1,49 +1,48 @@
 import { Request, Response } from "express";
-import ArticleModel from "../models/article.model";
-import ArticleCategoryModel from "../models/articleCategory.model";
-import RestaurantModel from "../models/restaurant.model";
-import logger from "../utils/logger.util";
+import { createArticle, deleteArticle, getAllArticles, getArticle } from "../services/article.service";
 
-export async function testFunctionHandler(req: Request, res: Response) {
+export async function createArticleHandler(req: Request, res: Response) {
+    const data = req.body;
+    const article = await createArticle(data);
+    return res.send(article);
+}
 
-    const array = [1, 3, 4, 2, 3, 4, 7, 8.5, 15, 3];
-    const result = array.reduce((acc, curr) => acc + curr) / array.length
-    logger.debug(result.toString());
-    return res.send("OK!");
+export async function getArticleHandler(req: Request, res: Response) {
+    const articleid = req.params.articleid;
+    const article = await getArticle({_id: articleid});
+    return res.send(article);
+}
 
-    // logger.debug("testFunctionHandler start !");
+export async function getAllArticlesHandler(req: Request, res: Response) {
 
-    // const cat = await ArticleCategoryModel.findOne({articleCatId: 2, name: "Plat"});
-    // if (cat === null) return res.send("dessert category doesn't exists");
+    //TODO: Add filter querry ???
 
-    // logger.debug("testFunctionHandler cat found !");
+    const articles = await getAllArticles({});
+    return res.send(articles);
+}
 
-    // const restaurant = await RestaurantModel.create({
-    //     name: "Restaurant 1",
-    //     description: "Restaurant 1 description",
-    //     address: {
-    //         label: "Restaurant 1 address",
-    //         longitude: 1,
-    //         latitude: 1
-    //     },
-    //     userId: "userId"
-    // });
+export async function updateArticleHandler(req: Request, res: Response) {
+    const articleid = req.params.articleid;
+    const updateData = req.body;
 
-    // logger.debug("testFunctionHandler restaurant created !");
-    
-    // const article = await ArticleModel.create({
-    //     name: "Test Article",
-    //     description: "This is a test article",
-    //     price: 10,
-    //     restaurantId: restaurant._id,
-    //     articleCatId: cat._id
-    // })
+    //TODO: check if user has permission to update this Article
 
-    // logger.debug("testFunctionHandler article created !");
+    const article = await getArticle({_id: articleid});
+    if (article === null) return res.sendStatus(404);
 
-    // //logger.debug(JSON.stringify(await article.populate("restaurantId")));
-    // await article.populate("restaurantId")
-    // return res.send(article);
+    const updatedArticle = await getArticle({_id: articleid}, {lean: true});
+    return res.send(updatedArticle);
+}
 
+export async function deleteArticleHandler(req: Request, res: Response) {
+    const articleid = req.params.articleid;
 
+    //TODO: check if user has permission to delete this Article
+
+    const deletion = await deleteArticle({_id: articleid});
+    if (deletion === null) return res.sendStatus(404);
+    return res.send({
+        message: "Article deleted successfully",
+        articleid: deletion._id
+    })
 }

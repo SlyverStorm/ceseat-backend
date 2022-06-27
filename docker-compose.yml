@@ -58,18 +58,18 @@ services:
   #     - ms-restaurant
   #   # command: cd /src && npx prisma migrate deploy && npx prisma db seed
 
-  ms-restaurant:
-    container_name: ms-restaurant
-    restart: unless-stopped
-    # ports:
-    #   - "3001:3000"
-    environment:
-      - NODE_ENV=DEV
-      - DATABASE_URL=mongodb://db-mongodb:27017
-    build:
-        context: ./apps/ms-restaurant/
-    depends_on:
-      - db-mongodb
+  # ms-restaurant:
+  #   container_name: ms-restaurant
+  #   restart: unless-stopped
+  #   # ports:
+  #   #   - "3001:3000"
+  #   environment:
+  #     - NODE_ENV=DEV
+  #     - DATABASE_URL=mongodb://db-mongodb:27017
+  #   build:
+  #       context: ./apps/ms-restaurant/
+  #   depends_on:
+  #     - db-mongodb
 
   # ms-verify:
   #   container_name: ms-verify

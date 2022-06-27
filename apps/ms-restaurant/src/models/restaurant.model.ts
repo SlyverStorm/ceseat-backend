@@ -10,6 +10,8 @@ export interface RestaurantDocument extends mongoose.Document {
         longitude: number;
         latitude: number;
     }
+    articles?: [Types.ObjectId];
+    menus?: [Types.ObjectId];
     userId: string;
     deletedAt?: Date | null;
 }
@@ -27,7 +29,11 @@ const RestaurantSchema = new mongoose.Schema({
             latitude: {type: Number, required: true},
         }
     },
-    userId: {type: String, required: true},
+
+    articles: [{type: Types.ObjectId, ref: "Article"}],
+    menus: [{type: Types.ObjectId, ref: "Menu"}],
+
+    userId: {type: String, required: true, unique: true},
     deletedAt: {type: Date, required: false, default: null},
 },{
     timestamps: true

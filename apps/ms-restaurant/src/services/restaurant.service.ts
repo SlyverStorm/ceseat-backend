@@ -7,9 +7,11 @@ export async function createRestaurant(input: DocumentDefinition<RestaurantDocum
 
 export async function getRestaurant(
     query: FilterQuery<RestaurantDocument>,
-    options: QueryOptions = {lean: true}
+    options: QueryOptions = {lean: true},
+    self: boolean = false
 ) {
-    return RestaurantModel.findOne({...query, deletedAt: null}, {}, options);
+    const getQuery = self ? {...query} : {...query, deletedAt: null};
+    return RestaurantModel.findOne({...getQuery}, {}, options);
 }
 
 export async function getAllRestaurants(
@@ -22,9 +24,11 @@ export async function getAllRestaurants(
 export async function updateRestaurant(
     query: FilterQuery<RestaurantDocument>,
     update: UpdateQuery<RestaurantDocument>,
-    options: QueryOptions
+    options: QueryOptions,
+    self: boolean = false
 ) {
-    return RestaurantModel.findOneAndUpdate({...query, deletedAt: null}, update, options);
+    const updateQuery = self ? {...query} : {...query, deletedAt: null};
+    return RestaurantModel.findOneAndUpdate({...updateQuery}, update, options);
 }
 
 export async function deleteRestaurant(
