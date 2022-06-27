@@ -2,7 +2,7 @@ import config from "config";
 import { Request, Response } from "express";
 import { CreateSessionInput } from "../schemas/session.schema";
 import { createSession, deleteSession, getAllSessions, getSessions } from "../services/session.service";
-import { validateUserCredentials } from "../services/user.service";
+import { getUser, validateUserCredentials } from "../services/user.service";
 import { signJwt } from "../utils/jwt.util";
 import logger from "../utils/logger.util";
 
@@ -64,14 +64,10 @@ export async function createSessionHandler(
     res.cookie("refresh-token", 'Bearer ' + refreshToken, {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     })
-    return res.send({
-        roleId: user.roleId,
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        image: user.image,
-        phone: user.phone
-    })
+
+    await getUser(user.id, false, true)
+    .then(user => res.send(user))
+    .catch(e => res.status(500).send(e))
     //res.send({accessToken, refreshToken, roleId: user.roleId})
 }
 
