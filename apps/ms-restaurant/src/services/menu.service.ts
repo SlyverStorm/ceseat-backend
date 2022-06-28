@@ -9,14 +9,38 @@ export async function getMenu(
     query: FilterQuery<MenuDocument>,
     options: QueryOptions = {lean: true}
 ) {
-    return MenuModel.findOne({...query, deletedAt: null}, {}, options);
+    return MenuModel.findOne({...query, deletedAt: null}, {}, options)
+    .populate(
+        {
+            path: "content",
+            populate: {
+                path: "articles",
+                model: "Article",
+                populate: {
+                    path: "articleCategory"
+                }
+            }
+        }
+    );
 }
 
 export async function getAllMenus(
     query: FilterQuery<MenuDocument>,
     options: QueryOptions = {lean: true}
 ) {
-    return MenuModel.find({...query, deletedAt: null}, {}, options);
+    return MenuModel.find({...query, deletedAt: null}, {}, options)
+    .populate(
+        {
+            path: "content",
+            populate: {
+                path: "articles",
+                model: "Article",
+                populate: {
+                    path: "articleCategory"
+                }
+            }
+        }
+    );
 }
 
 export async function updateMenu(
@@ -24,7 +48,19 @@ export async function updateMenu(
     update: UpdateQuery<MenuDocument>,
     options: QueryOptions
 ) {
-    return MenuModel.findOneAndUpdate({...query, deletedAt: null}, update, options);
+    return MenuModel.findOneAndUpdate({...query, deletedAt: null}, update, options)
+    .populate(
+        {
+            path: "content",
+            populate: {
+                path: "articles",
+                model: "Article",
+                populate: {
+                    path: "articleCategory"
+                }
+            }
+        }
+    );
 }
 
 export async function deleteMenu(

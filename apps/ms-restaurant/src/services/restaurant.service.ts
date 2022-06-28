@@ -11,14 +11,52 @@ export async function getRestaurant(
     self: boolean = false
 ) {
     const getQuery = self ? {...query} : {...query, deletedAt: null};
-    return RestaurantModel.findOne({...getQuery}, {}, options);
+    return RestaurantModel.findOne({...getQuery}, {}, options)
+    .populate([{
+        path: "articles",
+        populate: {
+            path: "articleCategory",
+        }
+    },
+    {
+        path: "menus",
+        populate: {
+            path: "content",
+            populate: {
+                path: "articles",
+                model: "Article",
+                populate: {
+                    path: "articleCategory"
+                }
+            }
+        }
+    }]);
 }
 
 export async function getAllRestaurants(
     query: FilterQuery<RestaurantDocument>,
     options: QueryOptions = {lean: true}
 ) {
-    return RestaurantModel.find({...query, deletedAt: null}, {}, options);
+    return RestaurantModel.find({...query, deletedAt: null}, {}, options)
+    .populate([{
+        path: "articles",
+        populate: {
+            path: "articleCategory",
+        }
+    },
+    {
+        path: "menus",
+        populate: {
+            path: "content",
+            populate: {
+                path: "articles",
+                model: "Article",
+                populate: {
+                    path: "articleCategory"
+                }
+            }
+        }
+    }]);
 }
 
 export async function updateRestaurant(
@@ -28,7 +66,26 @@ export async function updateRestaurant(
     self: boolean = false
 ) {
     const updateQuery = self ? {...query} : {...query, deletedAt: null};
-    return RestaurantModel.findOneAndUpdate({...updateQuery}, update, options);
+    return RestaurantModel.findOneAndUpdate({...updateQuery}, update, options)
+    .populate([{
+        path: "articles",
+        populate: {
+            path: "articleCategory",
+        }
+    },
+    {
+        path: "menus",
+        populate: {
+            path: "content",
+            populate: {
+                path: "articles",
+                model: "Article",
+                populate: {
+                    path: "articleCategory"
+                }
+            }
+        }
+    }]);
 }
 
 export async function deleteRestaurant(

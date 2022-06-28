@@ -8,7 +8,7 @@ export interface ArticleDocument extends mongoose.Document {
     price: number;
     isAvailable?: boolean;
     restaurantId: Types.ObjectId;
-    articleCatId: Types.ObjectId;
+    articleCategory: Types.ObjectId;
     deletedAt?: Date | null;
 }
 
@@ -19,7 +19,7 @@ const ArticleSchema = new mongoose.Schema({
     price: {type: Number, required: true},
     isAvailable: {type: Boolean, required: false, default: false},
     restaurantId: {type: Types.ObjectId, ref: "Restaurant", required: true},
-    articleCatId: {type: Types.ObjectId, ref: "ArticleCategory", required: true},
+    articleCategory: {type: Types.ObjectId, ref: "ArticleCategory", required: true},
     deletedAt: {type: Date, required: false, default: null}
 },{
     timestamps:true

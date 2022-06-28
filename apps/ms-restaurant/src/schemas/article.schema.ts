@@ -7,7 +7,7 @@ const createArticlePayload = {
             required_error: "Nom de l'article requis"
         }).max(35, "Taille maximale de 35 caractères"),
 
-        image: string().max(255, "Taille maximale de 255 caractères").optional(),
+        //image: string().max(255, "Taille maximale de 255 caractères").optional(),
 
         description: string().max(500, "Taille maximale de 500 caractères").optional(),
 
@@ -17,7 +17,7 @@ const createArticlePayload = {
 
         isAvailable: boolean().default(false).optional(),
 
-        articleCatId: string({
+        articleCategory: string({
             required_error: "Identifiant de ArticleCategory requis"
         })
 
@@ -32,7 +32,7 @@ const updateArticlePayload = {
         }).max(35, "Taille maximale de 35 caractères")
         .optional(),
 
-        image: string().max(255, "Taille maximale de 255 caractères").optional(),
+        //image: string().max(255, "Taille maximale de 255 caractères").optional(),
 
         description: string().max(500, "Taille maximale de 500 caractères").optional(),
 
@@ -43,7 +43,7 @@ const updateArticlePayload = {
 
         isAvailable: boolean().default(false).optional(),
 
-        articleCatId: string({
+        articleCategory: string({
             required_error: "Identifiant de ArticleCategory requis"
         }).optional()
 

@@ -12,6 +12,7 @@ export interface MenuDocument extends mongoose.Document {
         articles: [Types.ObjectId];
     }],
     deletedAt?: Date | null;
+    restaurantId: Types.ObjectId;
 }
 
 const MenuSchema = new mongoose.Schema({

@@ -47,7 +47,7 @@ export default {
         accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
         refreshTokenPublicKey: process.env.REFRESH_TOKEN_PUBLIC_KEY,
         refreshTokenPrivateKey: process.env.REFRESH_TOKEN_PRIVATE_KEY,
-        accessTokenTtl: "1h",
+        accessTokenTtl: "3h",
         refreshTokenTtl: "1w",
     },
     

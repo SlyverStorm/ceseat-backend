@@ -9,14 +9,14 @@ export async function getArticle(
     query: FilterQuery<ArticleDocument>,
     options: QueryOptions = {lean: true}
 ) {
-    return ArticleModel.findOne({...query, deletedAt: null}, {}, options);
+    return ArticleModel.findOne({...query, deletedAt: null}, {}, options).populate("articleCategory");
 }
 
 export async function getAllArticles(
     query: FilterQuery<ArticleDocument>,
     options: QueryOptions = {lean: true}
 ) {
-    return ArticleModel.find({...query, deletedAt: null}, {}, options);
+    return ArticleModel.find({...query, deletedAt: null}, {}, options).populate("articleCategory");
 }
 
 export async function updateArticle(
@@ -24,7 +24,7 @@ export async function updateArticle(
     update: UpdateQuery<ArticleDocument>,
     options: QueryOptions
 ) {
-    return ArticleModel.findOneAndUpdate({...query, deletedAt: null}, update, options);
+    return ArticleModel.findOneAndUpdate({...query, deletedAt: null}, update, options).populate("articleCategory");
 }
 
 export async function deleteArticle(

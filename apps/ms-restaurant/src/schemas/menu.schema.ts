@@ -4,15 +4,15 @@ const createMenuPayload = {
     body: object({
 
         name: string({
-            required_error: "Nom de l'article requis"
+            required_error: "Nom du menu requis"
         }).max(35, "Taille maximale de 35 caractères"),
 
-        image: string().max(255, "Taille maximale de 255 caractères").optional(),
+        //image: string().max(255, "Taille maximale de 255 caractères").optional(),
 
         description: string().max(500, "Taille maximale de 500 caractères").optional(),
 
         price: number({
-            required_error: "Prix requis"
+            required_error: "Prix total du menu requis"
         }).min(0, "Prix doit être supérieur à 0"),
 
         isAvailable: boolean().default(false).optional(),
@@ -36,16 +36,16 @@ const updateMenuPayload = {
     body: object({
 
         name: string({
-            required_error: "Nom de l'article requis"
+            required_error: "Nom du menu requis"
         }).max(35, "Taille maximale de 35 caractères")
         .optional(),
 
-        image: string().max(255, "Taille maximale de 255 caractères").optional(),
+        //image: string().max(255, "Taille maximale de 255 caractères").optional(),
 
         description: string().max(500, "Taille maximale de 500 caractères").optional(),
 
         price: number({
-            required_error: "Prix requis"
+            required_error: "Prix total du menu requis"
         }).min(0, "Prix doit être supérieur à 0")
         .optional(),
 
@@ -68,8 +68,8 @@ const updateMenuPayload = {
 
 const params = {
     params: object({
-        articleid: string({
-            required_error: "Identifiant d'article est requis"
+        menuid: string({
+            required_error: "Identifiant du menu requis"
         })
     }).strict()
 };

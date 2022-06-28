@@ -7,7 +7,7 @@ const createRestaurantPayload = {
             required_error: "Nom du restaurant requis"
         }).max(35, "Taille maximale de 35 caractères"),
 
-        image: string().max(255, "Taille maximale de 255 caractères").optional(),
+        //image: string().max(255, "Taille maximale de 255 caractères").optional(),
 
         description: string().max(500, "Taille maximale de 500 caractères").optional(),
 
@@ -44,7 +44,7 @@ const updateRestaurantPayload = {
         }).max(35, "Taille maximale de 35 caractères")
         .optional(),
 
-        image: string().max(255, "Taille maximale de 255 caractères").optional(),
+        //image: string().max(255, "Taille maximale de 255 caractères").optional(),
 
         description: string().max(500, "Taille maximale de 500 caractères").optional(),
 

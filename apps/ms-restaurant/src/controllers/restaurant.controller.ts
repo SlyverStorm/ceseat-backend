@@ -4,8 +4,8 @@ import { createRestaurant, deleteRestaurant, getAllRestaurants, getRestaurant, u
 
 export async function createRestaurantHandler(req: Request<{}, {}, CreateRestaurantInput["body"]>, res: Response) {
 
-    //const userid = res.locals.user.id; // TODO: get userid from token
-    const userid = "user_adminadmin";
+    const userid = res.locals.user.id;
+    //const userid = "user_adminadmin";
     const data = {
         ...req.body,
         userId:  userid
@@ -27,17 +27,18 @@ export async function createRestaurantHandler(req: Request<{}, {}, CreateRestaur
 
 export async function getRestaurantHandler(req: Request<GetRestaurantInput["params"], {}, {}>, res: Response, self: boolean = true) {
 
-    //const userid = res.locals.user.id; //TODO: get userid from token
+    const userid = res.locals.user.id;
     let data;
     if (self)  {
-        data = { userId: "user_adminadmin" }
-        //data = { restaurantId: req.params.restaurantid, userId: userid }
+        //data = { userId: "user_adminadmin" }
+        data = { userId: userid }
     }
     else {
         data = { restaurantId: req.params.restaurantid }
     }
 
     const restaurant = await getRestaurant({...data}, {}, self);
+    if (restaurant === null) return res.sendStatus(404);
     return res.send(restaurant);
 }
 
@@ -51,8 +52,8 @@ export async function getAllRestaurantsHandler(req: Request, res: Response) {
 
 export async function updateRestaurantHandler(req: Request, res: Response) {
 
-    //const userid = res.locals.user.id; // TODO: get userid from token
-    const userid = "user_adminadmin";
+    const userid = res.locals.user.id;
+    //const userid = "user_adminadmin";
 
     const updateData = req.body;
 
@@ -66,8 +67,8 @@ export async function updateRestaurantHandler(req: Request, res: Response) {
 
 export async function deleteRestaurantHandler(req: Request, res: Response) {
 
-    //const userid = res.locals.user.id; // TODO: get userid from token
-    const userid = "user_adminadmin";
+    const userid = res.locals.user.id;
+    //const userid = "user_adminadmin";
 
     //Verify if restaurant exists
     const restaurant = await getRestaurant({userId: userid});
