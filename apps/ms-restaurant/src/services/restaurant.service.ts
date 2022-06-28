@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { DocumentDefinition, FilterQuery, now, QueryOptions, UpdateQuery } from "mongoose";
 import RestaurantModel, { RestaurantDocument } from "../models/restaurant.model";
 
@@ -8,10 +9,8 @@ export async function createRestaurant(input: DocumentDefinition<RestaurantDocum
 export async function getRestaurant(
     query: FilterQuery<RestaurantDocument>,
     options: QueryOptions = {lean: true},
-    self: boolean = false
 ) {
-    const getQuery = self ? {...query} : {...query, deletedAt: null};
-    return RestaurantModel.findOne({...getQuery}, {}, options)
+    return RestaurantModel.findOne({...query, deletedAt: null}, {}, options)
     .populate([{
         path: "articles",
         populate: {
@@ -89,7 +88,9 @@ export async function updateRestaurant(
 }
 
 export async function deleteRestaurant(
-    query: FilterQuery<RestaurantDocument>
+    query: FilterQuery<RestaurantDocument>,
+    previousUserString: string,
 ) {
-    return RestaurantModel.findOneAndUpdate({...query, deletedAt: null}, {deletedAt: new Date(now())});
+    const prefix = dayjs().format("YYYY-MM-DD hh:mm:ss.SSS")
+    return RestaurantModel.findOneAndUpdate({...query, deletedAt: null}, {userId: `del-${prefix}:${previousUserString}`, deletedAt: new Date(now())});
 }

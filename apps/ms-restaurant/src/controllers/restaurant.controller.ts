@@ -12,7 +12,7 @@ export async function createRestaurantHandler(req: Request<{}, {}, CreateRestaur
     };
 
     //Verify if restaurant exists
-    const restaurant = await getRestaurant({userId: userid}, {}, true);
+    const restaurant = await getRestaurant({userId: userid}, {});
     if (restaurant != null) {
         if (restaurant.deletedAt != null) {
             const updatedRestaurant = await updateRestaurant({userId: userid}, {...data, deletedAt: null}, {new: true}, true);
@@ -37,7 +37,7 @@ export async function getRestaurantHandler(req: Request<GetRestaurantInput["para
         data = { restaurantId: req.params.restaurantid }
     }
 
-    const restaurant = await getRestaurant({...data}, {}, self);
+    const restaurant = await getRestaurant({...data}, {});
     if (restaurant === null) return res.sendStatus(404);
     return res.send(restaurant);
 }
@@ -45,8 +45,19 @@ export async function getRestaurantHandler(req: Request<GetRestaurantInput["para
 export async function getAllRestaurantsHandler(req: Request, res: Response) {
 
     //TODO: Add filter querry
+    // +- 0.25
+    const latitudeQuery = req.query.lat;
+    const longitudeQuery = req.query.lng;
+    const radiusQuery = req.query.rad;
 
-    const restaurants = await getAllRestaurants({});
+    let restaurants = await getAllRestaurants({});
+
+    if (latitudeQuery && longitudeQuery && radiusQuery) {
+        const lat = parseFloat(latitudeQuery.toString());
+        const lng = parseFloat(longitudeQuery.toString());
+        const rad = parseFloat(radiusQuery.toString());
+        restaurants = restaurants.filter(restaurant => (restaurant.address.latitude <= lat + rad && restaurant.address.latitude >= lat - rad) && (restaurant.address.longitude <= lng + rad && restaurant.address.longitude >= lng - rad));
+    }
     return res.send(restaurants);
 }
 
@@ -74,7 +85,7 @@ export async function deleteRestaurantHandler(req: Request, res: Response) {
     const restaurant = await getRestaurant({userId: userid});
     if (restaurant === null) return res.sendStatus(404);
 
-    const deletion = await deleteRestaurant({_id: restaurant._id});
+    const deletion = await deleteRestaurant({_id: restaurant._id}, restaurant.userId);
     if (deletion === null) return res.sendStatus(404);
     return res.send({
         message: "Restaurant deleted successfully",

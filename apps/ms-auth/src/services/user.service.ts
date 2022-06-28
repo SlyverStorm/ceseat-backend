@@ -4,6 +4,7 @@ import logger from "../utils/logger.util";
 import bcrypt from "bcrypt"
 import { CreateSessionInput } from "../schemas/session.schema";
 import { commGetUserOutput, getUserOutput } from "../models/userOutput.model";
+import dayjs from "dayjs";
 
 const prisma = prismaClient
 
@@ -116,13 +117,15 @@ export async function updateUser(_id: string, body: any, com: boolean = false) {
 }
 
 export async function deleteUser(_id: string, previousEmail: string, previousPhone: string) {
+  const prefix = dayjs().format("YYYY-MM-DD hh:mm:ss.SSS")
+  logger.debug(`${prefix} | Deleting user with id: ${_id}`)
   return prisma.user.update({
     where: {
       id: _id,
     },
     data: {
-      email: "del: " + previousEmail,
-      phone: "del: " + previousPhone,
+      email: `del-${prefix}: ` + previousEmail,
+      phone: `del-${prefix}: ` + previousPhone,
       deleted: true,
       image: null
     }

@@ -58,7 +58,7 @@ export async function getAllMenusHandler(req: Request<GetRestaurantInput["params
     if (self) {
         const userid = res.locals.user.id;
         //const userid = "user_adminadmin";
-        const restaurant = await getRestaurant({userId: userid}, {}, self);
+        const restaurant = await getRestaurant({userId: userid}, {});
         if (restaurant === null) return res.sendStatus(403);
 
         
@@ -79,7 +79,7 @@ export async function updateMenuHandler(req: Request<UpdateMenuInput["params"], 
     const userid = res.locals.user.id;
     //const userid = "user_adminadmin";
 
-    const restaurant = await getRestaurant({userId: userid},{}, true);
+    const restaurant = await getRestaurant({userId: userid},{});
     //logger.debug(restaurant!.Menus!.indexOf(new Types.ObjectId(Menuid)));
     if (restaurant === null) {
         return res.sendStatus(403);
@@ -103,7 +103,7 @@ export async function deleteMenuHandler(req: Request<DeleteMenuInput["params"], 
     const userid = res.locals.user.id;
     //const userid = "user_adminadmin";
 
-    const restaurant = await getRestaurant({userId: userid},{}, true);
+    const restaurant = await getRestaurant({userId: userid},{});
     //logger.debug(restaurant!.Menus!.indexOf(new Types.ObjectId(Menuid)));
     if (restaurant === null) {
         return res.sendStatus(403);

@@ -7,8 +7,8 @@ export const roles = [
 ]
 
 export const adminUser = {
-    name: "admin",
-    surname: "admin",
+    name: "Jean-Michel",
+    surname: "ADMIN",
     email: "admin@ceseat.com",
     password: "adminadmin",
     phone: "0566666666",
@@ -17,11 +17,41 @@ export const adminUser = {
 }
 
 export const commUser = {
-    name: "comm",
-    surname: "comm",
+    name: "Mireille",
+    surname: "COMMERCIAL",
     email: "commercial@ceseat.com",
     password: "commercial",
     phone: "0577777777",
     roleId: 4,
     refererCode: "comm"
+}
+
+export const customerUser = {
+    name: "Default",
+    surname: "CLIENT",
+    email: "client@viacesi.fr",
+    password: "clientsecret",
+    phone: "0577788777",
+    roleId: 1,
+    refererCode: "ADU6CV3Z"
+}
+
+export const driverUser = {
+    name: "Default",
+    surname: "LIVREUR",
+    email: "livreur@viacesi.fr",
+    password: "livreursecret",
+    phone: "0577667777",
+    roleId: 2,
+    refererCode: "O3LNSU8Q"
+}
+
+export const restaurantUser = {
+    name: "Default",
+    surname: "RESTAURATEUR",
+    email: "restaurateur@viacesi.fr",
+    password: "restaurateursecret",
+    phone: "0577777477",
+    roleId: 3,
+    refererCode: "NCBWSU61"
 }

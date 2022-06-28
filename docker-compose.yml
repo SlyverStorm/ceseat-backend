@@ -19,8 +19,8 @@ services:
     container_name: db-mysql
     restart: unless-stopped
     image: mysql
-    # ports:
-    #   - "3306:3306"
+    ports:
+      - "3306:3306"
     environment:
       - MYSQL_DATABASE=dbusers
       - MYSQL_ROOT_USER=root
@@ -35,8 +35,8 @@ services:
     image: mongo:latest
     container_name: db-mongodb
     restart: unless-stopped
-    # ports:
-    #   - "27017:27017"
+    ports:
+      - "27017:27017"
 
 # Backend Microservices :
   ms-auth:

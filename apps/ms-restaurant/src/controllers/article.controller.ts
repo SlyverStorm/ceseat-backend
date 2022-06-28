@@ -40,7 +40,7 @@ export async function getAllArticlesHandler(req: Request<GetRestaurantInput["par
     if (self) {
         const userid = res.locals.user.id;
         //const userid = "user_adminadmin";
-        const restaurant = await getRestaurant({userId: userid}, {}, self);
+        const restaurant = await getRestaurant({userId: userid}, {});
         if (restaurant === null) return res.sendStatus(403);
 
         
@@ -61,7 +61,7 @@ export async function updateArticleHandler(req: Request<UpdateArticleInput["para
     const userid = res.locals.user.id;
     //const userid = "user_adminadmin";
 
-    const restaurant = await getRestaurant({userId: userid},{}, true);
+    const restaurant = await getRestaurant({userId: userid},{});
     //logger.debug(restaurant!.articles!.indexOf(new Types.ObjectId(articleid)));
     if (restaurant === null) {
         return res.sendStatus(403);
@@ -85,7 +85,7 @@ export async function deleteArticleHandler(req: Request<DeleteArticleInput["para
     const userid = res.locals.user.id;
     //const userid = "user_adminadmin";
 
-    const restaurant = await getRestaurant({userId: userid},{}, true);
+    const restaurant = await getRestaurant({userId: userid},{});
     //logger.debug(restaurant!.articles!.indexOf(new Types.ObjectId(articleid)));
     if (restaurant === null) {
         return res.sendStatus(403);
