@@ -6,6 +6,8 @@ import routes from "./routes";
 import swaggerDocs from "./utils/swagger.util";
 import cors from "cors";
 import connect from "./utils/connect";
+import requestLogger from "./middleware/requestLogger";
+import deserializeUser from "./middleware/deserializeUser";
 
 //Displaying context data (app name and version) from configuration :
 const appName = config.get<number>("context.appName");
@@ -18,8 +20,18 @@ const app = express();
 app.use(express.json());
 //app.use(express.);
 app.use(cors({
-    origin: '*'
+    origin: '*',
+    // credentials: true,
+    // origin: function (origin, callback) {
+    //   if (typeof origin === 'string' && whitelist.indexOf(origin) !== -1) {
+    //     callback(null, true);
+    //   } else {
+    //     callback(new Error('Not allowed by CORS'));
+    //   }
+    // }
 }));
+app.use(requestLogger);
+app.use(deserializeUser);
 
 //Importing listen port from configuration
 const port = config.get<number>("connect.port");

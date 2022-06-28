@@ -123,8 +123,8 @@ export async function deleteUser(_id: string, previousEmail: string, previousPho
       id: _id,
     },
     data: {
-      email: `del- ${prefix}: ` + previousEmail,
-      phone: `del- ${prefix}: ` + previousPhone,
+      email: `del-${prefix}: ` + previousEmail,
+      phone: `del-${prefix}: ` + previousPhone,
       deleted: true,
       image: null
     }

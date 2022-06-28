@@ -52,7 +52,7 @@ function routes(app: Express) {
     app.post("/users/addresses/me", requireUser("customer"), validateRessource(createAddressSchema), createAddressHandler)
     app.get("/users/addresses/me", requireUser("customer"), getAllAddressesHandler)
     app.get("/users/addresses/me/:addressid", requireUser("customer"), validateRessource(getAddressSchema), getAddressHandler)
-    app.put("/users/adrdesses/me/:addressid", requireUser("customer"), validateRessource(updateAddressSchema), updateAddressHandler)
+    app.put("/users/addresses/me/:addressid", requireUser("customer"), validateRessource(updateAddressSchema), updateAddressHandler)
     app.delete("/users/addresses/me/:addressid", requireUser("customer"), validateRessource(deleteAddressSchema), deleteAddressHandler)
 
     // //Users Wallets related self requests (only self)

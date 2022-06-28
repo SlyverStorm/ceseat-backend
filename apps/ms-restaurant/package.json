@@ -22,14 +22,14 @@
     "lint": "^0.7.0",
     "lodash": "^4.17.21",
     "mongoose": "^6.3.5",
+    "morgan": "^1.10.0",
     "multer": "1.4.5-lts.1",
     "nanoid": "^3.3.4",
     "pino": "^8.0.0",
     "pino-pretty": "^8.0.0",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0",
-    "zod": "^3.17.3",
-    "zod-form-data": "^1.2.0"
+    "zod": "^3.17.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -39,6 +39,7 @@
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/lodash": "^4.14.182",
+    "@types/morgan": "^1.9.3",
     "@types/multer": "^1.4.7",
     "@types/nanoid": "^3.0.0",
     "@types/node": "^17.0.40",

@@ -1,4 +1,4 @@
-import { adminUser, commUser, roles } from "./default";
+import { adminUser, commUser, customerUser, driverUser, restaurantUser, roles } from "./default";
 import { PrismaClient } from "@prisma/client";
 import logger from "../src/utils/logger.util"
 import { customAlphabet } from "nanoid";
@@ -51,25 +51,32 @@ async function seedRoles() {
         
     }
 
-    const existingAdmin = await prisma.user.findFirst({
-        where: adminUser
-    })
-    if (existingAdmin === null) {
-        await prisma.user.create({
-            data: adminUser
-        })
-        logger.info(`User admin created`)
-    }
+    await prisma.user.create({
+        data: adminUser
+    }).then(() => logger.info(`User admin created`))
+    .catch(() => logger.warn(`User admin already exists`))
+    
+    await prisma.user.create({
+        data: commUser
+    }).then(() => logger.info(`User commercial created`))
+    .catch(() => logger.warn(`User commercial already exists`))
 
-    const existingComm = await prisma.user.findFirst({
-        where: commUser
-    })
-    if (existingComm === null) {
-        await prisma.user.create({
-            data: commUser
-        })
-        logger.info(`User commercial created`)
-    }
+    await prisma.user.create({
+        data: customerUser
+    }).then(() => logger.info(`User customer created`))
+    .catch(() => logger.warn(`User customer already exists`))
+
+    await prisma.user.create({
+        data: driverUser,
+    }).then(() => logger.info(`User driver created`))
+    .catch(() => logger.warn(`User driver already exists`))
+
+    await prisma.user.create({
+        data: restaurantUser,
+    }).then(() => logger.info(`User restaurant created`))
+    .catch(() => logger.warn(`User restaurant already exists`))
+
+
     logger.info(`Seed process ended with success !`)
 }
 

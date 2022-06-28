@@ -19,8 +19,8 @@ services:
     container_name: db-mysql
     restart: unless-stopped
     image: mysql
-    # ports:
-    #   - "3306:3306"
+    ports:
+      - "3306:3306"
     environment:
       - MYSQL_DATABASE=dbusers
       - MYSQL_ROOT_USER=root
@@ -31,12 +31,12 @@ services:
     volumes:
       - ./init.sql:/data/application/init.sql
 
-  # db-mongodb:
-  #   image: mongo:latest
-  #   container_name: db-mongodb
-  #   restart: unless-stopped
-  #   ports:
-  #     - "27017:27017"
+  db-mongodb:
+    image: mongo:latest
+    container_name: db-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
 
 # Backend Microservices :
   ms-auth:
@@ -58,21 +58,15 @@ services:
       - ms-restaurant
     # command: cd /src && npx prisma migrate deploy && npx prisma db seed
 
-  # ms-restaurant:
-  #   container_name: ms-restaurant
-  #   restart: unless-stopped
-  #   # ports:
-  #   #   - "3001:3000"
-  #   environment:
-  #     - NODE_ENV=DEV
-  #     - DATABASE_URL=mongodb://db-mongodb:27017
-  #   build:
-  #       context: ./apps/ms-restaurant/
-  #   depends_on:
-  #     - db-mongodb
-
-  # ms-verify:
-  #   container_name: ms-verify
-  #   restart: unless-stopped
-  #   build:
-  #       context: ./apps/ms-verify/
+  ms-restaurant:
+    container_name: ms-restaurant
+    restart: unless-stopped
+    # ports:
+    #   - "3001:3000"
+    environment:
+      - NODE_ENV=DEV
+      - DATABASE_URL=mongodb://db-mongodb:27017
+    build:
+        context: ./apps/ms-restaurant/
+    depends_on:
+      - db-mongodb

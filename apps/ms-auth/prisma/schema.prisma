@@ -25,9 +25,9 @@ model User {
 
   name String @db.VarChar(35)
   surname String @db.VarChar(35)
-  email String @db.VarChar(320) @unique
+  email String @db.VarChar(350) @unique
   password String @db.VarChar(255)
-  phone String @db.VarChar(15) @unique
+  phone String @db.VarChar(50) @unique
   image String? @db.VarChar(300)
 
   isSuspended Boolean @default(false)
