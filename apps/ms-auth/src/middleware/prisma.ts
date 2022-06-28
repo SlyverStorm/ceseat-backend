@@ -50,7 +50,7 @@ prismaClient.$use(async (params, next) => {
 //Password encrypt middleware
 prismaClient.$use(async (params, next) => {
     
-    if (params.action === ("create" || "update") && params.model === "User") {
+    if ((params.action === "create" || params.action === "update") && params.model === "User") {
         let user = params.args.data;
         let salt = bcrypt.genSaltSync(10);
         let hash = bcrypt.hashSync(user.password, salt);

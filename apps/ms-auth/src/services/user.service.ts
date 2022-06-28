@@ -118,7 +118,6 @@ export async function updateUser(_id: string, body: any, com: boolean = false) {
 
 export async function deleteUser(_id: string, previousEmail: string, previousPhone: string) {
   const prefix = dayjs().format("YYYY-MM-DD hh:mm:ss.SSS")
-  logger.debug(`${prefix} | Deleting user with id: ${_id}`)
   return prisma.user.update({
     where: {
       id: _id,
