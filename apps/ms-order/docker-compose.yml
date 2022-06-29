@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  ms-restaurant:
+    container_name: ms-restaurant
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=DEV
+      - DATABASE_URL=mongodb://db-mongodb:27017
+    build:
+        context: ./ 
+
+  db-mongodb:
+    image: mongo:latest
+    container_name: db-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
