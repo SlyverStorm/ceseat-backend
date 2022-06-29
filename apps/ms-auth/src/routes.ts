@@ -41,12 +41,12 @@ function routes(app: Express) {
     app.get("/sessions", requireUser("technical"), getAllSessionsHandler);   //OK!
 
     // //Sessions verifiers requests
-    app.get("/sessions/verify", requireUser("all"), OK)                      //OK!
-    app.get("/sessions/verify/customer", requireUser("customer"), OK)        //OK!
-    app.get("/sessions/verify/restaurant", requireUser("restaurant"), OK)    //OK!
-    app.get("/sessions/verify/driver", requireUser("driver"), OK)            //OK!
-    app.get("/sessions/verify/commercial", requireUser("commercial"), OK)    //OK!
-    app.get("/sessions/verify/technical", requireUser("technical"), OK)      //OK!
+    app.get("/sessions/verify/all", requireUser("all"), AuthHandler)                      //OK!
+    app.get("/sessions/verify/customer", requireUser("customer"), AuthHandler)        //OK!
+    app.get("/sessions/verify/restaurant", requireUser("restaurant"), AuthHandler)    //OK!
+    app.get("/sessions/verify/driver", requireUser("driver"), AuthHandler)            //OK!
+    app.get("/sessions/verify/commercial", requireUser("commercial"), AuthHandler)    //OK!
+    app.get("/sessions/verify/technical", requireUser("technical"), AuthHandler)      //OK!
 
     // //Users Addresses related self requests
     app.post("/users/addresses/me", requireUser("customer"), validateRessource(createAddressSchema), createAddressHandler)
@@ -67,8 +67,8 @@ function routes(app: Express) {
 //     res.send("Route currently in Work in progress")
 // }
 
-function OK(req: Request, res: Response) {
-    res.sendStatus(200)
+function AuthHandler(req: Request, res: Response) {
+    res.send(res.locals.user)
 }
 
 export default routes;

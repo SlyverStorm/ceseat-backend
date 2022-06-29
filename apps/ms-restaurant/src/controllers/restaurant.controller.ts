@@ -27,9 +27,9 @@ export async function createRestaurantHandler(req: Request<{}, {}, CreateRestaur
 
 export async function getRestaurantHandler(req: Request<GetRestaurantInput["params"], {}, {}>, res: Response, self: boolean = true) {
 
-    const userid = res.locals.user.id;
     let data;
     if (self)  {
+        const userid = res.locals.user.id;
         //data = { userId: "user_adminadmin" }
         data = { userId: userid }
     }
