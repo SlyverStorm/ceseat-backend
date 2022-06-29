@@ -18,7 +18,6 @@ logger.info(`Starting ${appName} V${appVersion} ...`);
 const app = express();
 //Using express json parser to handle request body handling
 app.use(express.json());
-//app.use(express.);
 app.use(
     cors({
       credentials: true,
@@ -28,7 +27,6 @@ app.use(
     })
   );
 app.use(requestLogger);
-// app.use(deserializeUser);
 
 //Importing listen port from configuration
 const port = config.get<number>("connect.port");

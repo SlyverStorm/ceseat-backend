@@ -13,7 +13,8 @@ export interface DriverStatusDocument extends mongoose.Document {
         label: string;
         latitude: number;
         longitude: number;
-    }
+    };
+    deletedAt?: Date | null;
 }
 
 const DriverStatusSchema = new mongoose.Schema({
@@ -27,7 +28,8 @@ const DriverStatusSchema = new mongoose.Schema({
             latitude: {type: Number, required: true},
             longitude: {type: Number, required: true}
         }
-    }
+    },
+    deletedAt: {type: Date, required: false, default: null}, 
 },{
     timestamps: true
 });

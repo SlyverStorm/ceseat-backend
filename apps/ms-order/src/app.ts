@@ -18,20 +18,15 @@ logger.info(`Starting ${appName} V${appVersion} ...`);
 const app = express();
 //Using express json parser to handle request body handling
 app.use(express.json());
-//app.use(express.);
-app.use(cors({
-    origin: '*',
-    // credentials: true,
-    // origin: function (origin, callback) {
-    //   if (typeof origin === 'string' && whitelist.indexOf(origin) !== -1) {
-    //     callback(null, true);
-    //   } else {
-    //     callback(new Error('Not allowed by CORS'));
-    //   }
-    // }
-}));
+app.use(
+    cors({
+      credentials: true,
+      origin: function (origin, callback) {
+        callback(null, true);
+      },
+    })
+  );
 app.use(requestLogger);
-app.use(deserializeUser);
 
 //Importing listen port from configuration
 const port = config.get<number>("connect.port");
