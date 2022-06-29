@@ -44,18 +44,16 @@ export async function getRestaurantHandler(req: Request<GetRestaurantInput["para
 
 export async function getAllRestaurantsHandler(req: Request, res: Response) {
 
-    //TODO: Add filter querry
     // +- 0.25
     const latitudeQuery = req.query.lat;
     const longitudeQuery = req.query.lng;
-    const radiusQuery = req.query.rad;
 
     let restaurants = await getAllRestaurants({});
 
-    if (latitudeQuery && longitudeQuery && radiusQuery) {
+    if (latitudeQuery && longitudeQuery) {
         const lat = parseFloat(latitudeQuery.toString());
         const lng = parseFloat(longitudeQuery.toString());
-        const rad = parseFloat(radiusQuery.toString());
+        const rad = 0.25;
         restaurants = restaurants.filter(restaurant => (restaurant.address.latitude <= lat + rad && restaurant.address.latitude >= lat - rad) && (restaurant.address.longitude <= lng + rad && restaurant.address.longitude >= lng - rad));
     }
     return res.send(restaurants);
