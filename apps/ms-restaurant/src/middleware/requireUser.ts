@@ -12,7 +12,7 @@ function verifyAuth(req: Request, path: "all" | "customer" | "driver" | "restaur
         const options = {
             host: config.get<string>("connect.authHost"),
             port: config.get<number>("connect.authPort"),
-            path: '/sessions/verify/' + path,
+            path: '/verify/' + path,
             method: 'GET',
             headers: {
                 'Cookie': req.headers.cookie
@@ -34,25 +34,6 @@ function verifyAuth(req: Request, path: "all" | "customer" | "driver" | "restaur
         authReq.write("");
         authReq.end();
     });
-
-    // let deserializedToken = null
-    // let authRequest = request(options, (res) => {
-    //     console.log(`STATUS: ${res.statusCode}`);
-    //     console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-    //     res.setEncoding('utf8');
-    //     res.on('data', (chunk) => {
-    //         console.log(`BODY: ${chunk}`);
-    //         if (res.statusCode === 200) deserializedToken = JSON.parse(chunk);
-    //     });
-    //     res.on('end', () => {
-    //         console.log('No more data in response.');
-    //     });
-    // })
-    // authRequest.write("")
-    // authRequest
-    // authRequest.end()
-
-    // return deserializedToken;
 
 }
 

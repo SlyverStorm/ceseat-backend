@@ -1,6 +1,6 @@
 {
     "connect": {
-        "authHost": "ms-auth",
-        "authPort": 3000
+        "authHost": "nginx-proxy",
+        "authPort": 4100
     }
 }
