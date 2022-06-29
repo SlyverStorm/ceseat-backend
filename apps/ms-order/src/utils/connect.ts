@@ -34,7 +34,6 @@ function connect(){
         // }).then(result => logger.info(`Article category successfully created: ${JSON.stringify(result)}`))
         // .catch(error => logger.warn(`Category "Boisson" already exists`));
 
-
         // Normal Status :
         OrderStatusModel.create({
             orderStatusId: 1,
@@ -93,16 +92,16 @@ function connect(){
         .catch(() => logger.warn(`Order status "Commande livrée" already exists`));
 
         // Cancel status :
-        OrderStatusModel.create({
-            orderStatusId: -1,
-            title: "Annulée par le client",
-            description: "Le client a annulé la commande",
-            cancelled: true
-        }).then(result => logger.info(`Order status "Annulée par le client" successfully created: ${JSON.stringify(result)}`))
-        .catch(() => logger.warn(`Order status "Annulée par le client" already exists`));
+        // OrderStatusModel.create({
+        //     orderStatusId: -1,
+        //     title: "Annulée par le client",
+        //     description: "Le client a annulé la commande",
+        //     cancelled: true
+        // }).then(result => logger.info(`Order status "Annulée par le client" successfully created: ${JSON.stringify(result)}`))
+        // .catch(() => logger.warn(`Order status "Annulée par le client" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: -2,
+            orderStatusId: -1,
             title: "Réfusée",
             description: "Le restaurant a refusé la commande",
             cancelled: true
@@ -110,12 +109,13 @@ function connect(){
         .catch(() => logger.warn(`Order status "Refusée" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: -3,
+            orderStatusId: -2,
             title: "Aucun livreur trouvé",
             description: "Aucun livreur n'a été trouvé pour la livraison de la commande",
             cancelled: true
         }).then(result => logger.info(`Order status "Aucun livreur trouvé" successfully created: ${JSON.stringify(result)}`))
         .catch(() => logger.warn(`Order status "Aucun livreur trouvé" already exists`));
+
 
         // OrderStatusModel.create({
         //     orderStatusId: -4,
