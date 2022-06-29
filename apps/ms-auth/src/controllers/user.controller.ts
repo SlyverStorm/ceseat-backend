@@ -86,7 +86,11 @@ export async function createUserHandler(
     res.cookie("refresh-token", 'Bearer ' + refreshToken, {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
     })
-    return res.send({...user, id: undefined, roleId: undefined});
+
+    await getUser(user.id, false, true)
+    .then(user => res.send(user))
+    .catch(e => res.status(500).send(e))
+    //return res.send({...user, id: undefined, roleId: undefined});
 }
 
 export async function getUserHandler(
