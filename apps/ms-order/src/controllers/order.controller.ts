@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { StatusType } from "../models/driverStatus.model";
 import { GetDriverStatusOptionalInput, GetDriverStatusMandatoryInput } from "../schemas/driverStatus.schema";
-import { CreateOrderInput } from "../schemas/order.schema";
+import { CreateOrderInput, GetOrderInput } from "../schemas/order.schema";
 import { createDriverStatus, getDriverStatus, updateDriverStatus } from "../services/driverStatus.service";
-import { createOrder, getAllOrders } from "../services/order.service";
+import { createOrder, getAllOrders, getOrder, updateOrder } from "../services/order.service";
 import { getOrderStatus } from "../services/orderStatus.service";
 import { getRestaurant, getUserRestaurant } from "../services/restaurant.service";
 import { toObjectId, toObjectIdArray } from "../utils/mongoose.utils";
@@ -47,6 +47,20 @@ export async function createOrderHandler(req: Request<{}, {}, CreateOrderInput["
 
 export async function getOrdersClientHandler(req: Request<{}, {}, {}>, res: Response) {
     const userid = res.locals.user.id;
+    const completed = req.query.completed;
+    if (completed && completed === "true") {
+        const completedStatus = await getOrderStatus({stateNumber: 7});
+        if (completedStatus === null) return res.status(500).send("Order status not found");
+        const orders = await getAllOrders({userId: userid, orderStatus: completedStatus._id});
+        return res.status(200).send(orders);
+    }
+    else if (completed && completed === "false") {
+        const completedStatus = await getOrderStatus({stateNumber: 7});
+        if (completedStatus === null) return res.status(500).send("Order status not found");
+        const orders = await getAllOrders({userId: userid, orderStatus: {$ne: completedStatus._id}});
+        return res.status(200).send(orders);
+    }
+
     const orders = await getAllOrders({userId: userid});
     return res.status(200).send(orders);
 }
@@ -57,6 +71,20 @@ export async function getOrdersRestaurantHandler(req: Request<{}, {}, {}>, res: 
     const restaurant = await getUserRestaurant(req);
     if (restaurant === null) return res.status(404).send("Restaurant not found for this user");
     console.log(restaurant);
+
+    const completed = req.query.completed;
+    if (completed === "true") {
+        const completedStatus = await getOrderStatus({stateNumber: 7});
+        if (completedStatus === null) return res.status(500).send("Order status not found");
+        const orders = await getAllOrders({$match: {"restaurant._id": restaurant._id}, orderStatus: completedStatus._id});
+        return res.status(200).send(orders);
+    }
+    else if (completed && completed === "false") {
+        const completedStatus = await getOrderStatus({stateNumber: 7});
+        if (completedStatus === null) return res.status(500).send("Order status not found");
+        const orders = await getAllOrders({$match: {"restaurant._id": restaurant._id}, orderStatus: {$ne: completedStatus._id}});
+        return res.status(200).send(orders);
+    }
     
     const orders = await getAllOrders({ $match: {"restaurant._id": restaurant._id}});
     return res.status(200).send(orders);
@@ -77,6 +105,20 @@ export async function getOrdersDriverHandler(req: Request<{}, GetDriverStatusOpt
         if (driver === null) return res.status(500).send("Driver status not updated");
     }
     console.log(driver);
+
+    const completed = req.query.completed;
+    if (completed === "true") {
+        const completedStatus = await getOrderStatus({stateNumber: 7});
+        if (completedStatus === null) return res.status(500).send("Order status not found");
+        const orders = await getAllOrders({driver: driver._id, orderStatus: completedStatus._id});
+        return res.status(200).send(orders);
+    }
+    else if (completed && completed === "false") {
+        const completedStatus = await getOrderStatus({stateNumber: 7});
+        if (completedStatus === null) return res.status(500).send("Order status not found");
+        const orders = await getAllOrders({driver: driver._id, orderStatus: {$ne: completedStatus._id}});
+        return res.status(200).send(orders);
+    }
     
     const orders = await getAllOrders({driver: driver._id});
     return res.status(200).send(orders);
@@ -110,4 +152,94 @@ export async function searchForOrders(req: Request<{}, GetDriverStatusMandatoryI
     console.log(orders);
     orders = orders.filter(order => (order.restaurant.address.latitude <= parseFloat(lat.toString()) + rad && order.restaurant.address.latitude >= parseFloat(lat.toString()) - rad) && (order.restaurant.address.longitude <= parseFloat(lng.toString()) + rad && order.restaurant.address.longitude >= parseFloat(lng.toString()) - rad))
     return res.status(200).send(orders);
+}
+
+export async function setDriverNextState(req: Request<GetOrderInput["params"], {}, {}>, res: Response) {
+    const userid = res.locals.user.id;
+    const orderid = req.params.orderid;
+
+    let driver = await getDriverStatus({userId: userid});
+    if (driver === null) return res.status(404).send("Driver status not found");
+
+    const order: any = await getOrder({_id: orderid});
+    if (order === null) return res.status(404).send("Order not found");
+
+    if (order.orderStatus.statusNumber === 2 && order.driver === null ) {
+        const newOrderStatus = await getOrderStatus({statusNumber: 3});
+        if (newOrderStatus === null) return res.status(500).send("Order status not found");
+        const updatedOrder = await updateOrder({_id: orderid}, {driver: driver._id, orderStatus: newOrderStatus._id}, {new: true});
+        return res.status(200).send(updatedOrder);
+    }
+
+    if (order.orderStatus.statusNumber === 5 && order.driver === driver._id) {
+        const newOrderStatus = await getOrderStatus({statusNumber: 6});
+        if (newOrderStatus === null) return res.status(500).send("Order status not found");
+        const updatedOrder = await updateOrder({_id: orderid}, {orderStatus: newOrderStatus._id}, {new: true});
+        return res.status(200).send(updatedOrder);
+    }
+
+    if (order.orderStatus.statusNumber === 6 && order.driver === driver._id) {
+        const newOrderStatus = await getOrderStatus({statusNumber: 7});
+        if (newOrderStatus === null) return res.status(500).send("Order status not found");
+        const updatedOrder = await updateOrder({_id: orderid}, {orderStatus: newOrderStatus._id}, {new: true});
+        return res.status(200).send(updatedOrder);
+    }
+
+    return res.status(400).send("Cannot set next step for this order");	
+    //const order = await getOrder({_id: orderid, $match: {"driver._id": driver._id}});
+}
+
+export async function setRestaurantNextState(req: Request<GetOrderInput["params"], {}, {}>, res: Response) {
+    const userid = res.locals.user.id;
+    const orderid = req.params.orderid;
+
+    const restaurant = await getRestaurant(req, userid);
+    if (restaurant === null) return res.status(404).send("Restaurant not found");
+
+    const order: any = await getOrder({_id: orderid, restaurant: restaurant._id});
+    if (order === null) return res.status(404).send("Order not found");
+
+    if (order.orderStatus.statusNumber === 1 && order.driver === null ) {
+        const newOrderStatus = await getOrderStatus({statusNumber: 2});
+        if (newOrderStatus === null) return res.status(500).send("Order status not found");
+        const updatedOrder = await updateOrder({_id: orderid}, {orderStatus: newOrderStatus._id}, {new: true});
+        return res.status(200).send(updatedOrder);
+    }
+
+    if (order.orderStatus.statusNumber === 3) {
+        const newOrderStatus = await getOrderStatus({statusNumber: 4});
+        if (newOrderStatus === null) return res.status(500).send("Order status not found");
+        const updatedOrder = await updateOrder({_id: orderid}, {orderStatus: newOrderStatus._id}, {new: true});
+        return res.status(200).send(updatedOrder);
+    }
+
+    if (order.orderStatus.statusNumber === 4) {
+        const newOrderStatus = await getOrderStatus({statusNumber: 5});
+        if (newOrderStatus === null) return res.status(500).send("Order status not found");
+        const updatedOrder = await updateOrder({_id: orderid}, {orderStatus: newOrderStatus._id}, {new: true});
+        return res.status(200).send(updatedOrder);
+    }
+
+    return res.status(400).send("Cannot set next step for this order");
+    //const order = await getOrder({_id: orderid, $match: {"driver._id": driver._id}});
+}
+
+export async function cancelOrder(req: Request<GetOrderInput["params"], {}, {}>, res: Response) {
+    const userid = res.locals.user.id;
+    const orderid = req.params.orderid;
+
+    const restaurant = await getRestaurant(req, userid);
+    if (restaurant === null) return res.status(404).send("Restaurant not found");
+
+    const order: any = await getOrder({_id: orderid, restaurant: restaurant._id});
+    if (order === null) return res.status(404).send("Order not found");
+
+    if (order.orderStatus.statusNumber === 1) {
+        const newOrderStatus = await getOrderStatus({statusNumber: -1});
+        if (newOrderStatus === null) return res.status(500).send("Order status not found");
+        const updatedOrder = await updateOrder({_id: orderid}, {orderStatus: newOrderStatus._id}, {new: true});
+        return res.status(200).send(updatedOrder);
+    }
+
+    return res.status(400).send("Cannot cancel this order");
 }

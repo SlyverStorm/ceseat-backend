@@ -55,9 +55,6 @@ export interface OrderDocument extends mongoose.Document {
     //     image?: string;
     // },
     driver: Types.ObjectId | null,
-    wallet: {
-        cardNumber: string;
-    },
     address: {
         label: string;
         latitude: number;
@@ -165,13 +162,6 @@ const OrderSchema = new mongoose.Schema({
     //     }
     // },
     driver: {type: Types.ObjectId, ref: "DriverStatus", required: false, default: null},
-    wallet: {
-        type: Object,
-        required: true,
-        properties: {
-            cardNumber: {type: String, required: true},
-        }
-    },
     address: {
         type: Object,
         required: true,

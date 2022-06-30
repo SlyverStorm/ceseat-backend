@@ -16,12 +16,6 @@ const createOrderPayload = {
             required_error: "Identifiant de restaurant requis"
         }),
 
-        wallet: object({
-            cardNumber: string({
-                required_error: "Numéro de carte requis"
-            }).min(16, "Taille maximale de 16 caractères").max(16, "Taille maximale de 16 caractères"),
-        }).strict(),
-
         address: object({
             label: string({
                 required_error: "Libellé de l'adresse requis"
