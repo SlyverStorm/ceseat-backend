@@ -152,13 +152,14 @@ export async function updateUserHandler(
         if (req.file && user.image == null) update.image = req.file.filename // Handle when user created an account without an image
 
         const updatedUser = await updateUser(_id, update, returnId);
+        console.log(updatedUser)
         if(req.file && user.image != null && updatedUser?.image != null) updateImage(req.file, updatedUser.image); // Handle image replace when updating a user with another image
         return res.send(updatedUser);
     }
     catch(e:any) {
         if(req.file) deleteImage(req.file.filename);
         if (e.status) return res.status(e.status).send(e);
-        return res.sendStatus(500);
+        return res.status(500).send(e);
     }
 }
 
@@ -167,13 +168,14 @@ export async function deleteUserHandler(
     res: Response,
     self: boolean = true
 ) {
+    console.log(self)
     let _id: string
     if (res.locals.user && self) _id = res.locals.user.id
     else _id = req.params.userid;
     //logger.debug(`Deleting user from ${_id}...`)
 
     try {
-        const user = await getUser(_id, true);
+        const user = await getUser(_id, true, self);
         if (!user) return res.sendStatus(404); // 404: When user do not exist
         if (user.role.name === "commercial" || user.role.name === "technical") return res.sendStatus(403); // 403: When user has commercial or technical role
     

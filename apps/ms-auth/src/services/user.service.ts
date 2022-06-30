@@ -58,6 +58,10 @@ export async function getUser(_id: string, returnId: boolean = false, self: bool
       }
     }
 
+    console.log(whereArgs)
+    console.log(self)
+    console.log(_id)
+
     const outputSchema = returnId ? commGetUserOutput : getUserOutput
 
     return prisma.user.findFirst({
@@ -87,8 +91,12 @@ export async function updateUser(_id: string, body: any, com: boolean = false) {
 
   const outputSchema = com ? commGetUserOutput : getUserOutput
 
+  console.log(outputSchema)
+  console.log(body)
+  console.log(_id)
+
   try{
-    return await prisma.user.update({
+    return prisma.user.update({
         where: {
             id: _id
           },

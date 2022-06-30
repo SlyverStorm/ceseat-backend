@@ -52,9 +52,11 @@ prismaClient.$use(async (params, next) => {
     
     if ((params.action === "create" || params.action === "update") && params.model === "User") {
         let user = params.args.data;
-        let salt = bcrypt.genSaltSync(10);
-        let hash = bcrypt.hashSync(user.password, salt);
-        user.password = hash;
+        if (user.password) {
+            let salt = bcrypt.genSaltSync(10);
+            let hash = bcrypt.hashSync(user.password, salt);
+            user.password = hash;
+        }
     }
     return await next(params);
 });

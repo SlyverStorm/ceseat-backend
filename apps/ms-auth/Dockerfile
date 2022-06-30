@@ -6,7 +6,9 @@ ADD ./ /src
 WORKDIR /src
 
 RUN rm -rf /src/node_modules /src/build
-RUN pnpm i && pnpm build
+RUN pnpm i 
+RUN npx prisma generate
+RUN pnpm build
 
 ENTRYPOINT ["/bin/bash", "run.sh"]
 # CMD  ["ls"]
