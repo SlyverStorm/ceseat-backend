@@ -1,6 +1,8 @@
 {
     "connect": {
         "authHost": "nginx-proxy",
-        "authPort": 4100
+        "authPort": 4100,
+        "restaurantHost": "nginx-proxy",
+        "restaurantPort": 4100
     }
 }

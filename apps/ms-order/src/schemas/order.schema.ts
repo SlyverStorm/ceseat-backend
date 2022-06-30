@@ -8,8 +8,18 @@ const createOrderPayload = {
         // }).min(0, "Prix doit être supérieur à 0"),
 
         summary: object({
-            articles: array(string()),
-            menus: array(string())
+            articles: array(object({
+                _id: string({
+                    required_error: "Id article requis"
+                }),
+                quantity: number().min(1, "Quantité doit être supérieur à 0")
+            }).strict()),
+            menus: array(object({
+                _id: string({
+                    required_error: "Id menus requis"
+                }),
+                quantity: number().min(1, "Quantité doit être supérieur à 0")
+            }).strict())
         }).strict(),
 
         restaurant: string({

@@ -24,8 +24,8 @@ export async function createOrderHandler(req: Request<{}, {}, CreateOrderInput["
     const formatedData = {
         ...data,
         summary: {
-            articles: data.summary.articles.map((article) => restaurant.articles.find((v:any) => v._id = article)),
-            menus: data.summary.menus.map((menu) => restaurant.menus.find((v:any) => v._id = menu)),
+            articles: data.summary.articles.map((article) => ({...restaurant.articles.find((v:any) => v._id = article._id), quantity: article.quantity})),
+            menus: data.summary.menus.map((menu) => ({...restaurant.menus.find((v:any) => v._id = menu._id), quantity: menu.quantity})),
         },
         restaurant: {
             _id: toObjectId(restaurant._id),
@@ -37,7 +37,7 @@ export async function createOrderHandler(req: Request<{}, {}, CreateOrderInput["
         price: 0,
     }
     if (!(formatedData.summary.articles.length > 0 || formatedData.summary.menus.length > 0)) return res.status(400).send("Order must contain at least one article or menu");
-    formatedData.price = (formatedData.summary.menus.reduce((sum, add) => sum + add.price, 0) +  formatedData.summary.articles.reduce((sum, add) => sum + add.price, 0)).toFixed(2);
+    formatedData.price = (formatedData.summary.menus.reduce((sum, add) => sum + add.price * add.quantity, 0) +  formatedData.summary.articles.reduce((sum, add) => sum + add.price * add.quantity, 0)).toFixed(2);
 
     //console.log(JSON.stringify(formatedData));
 

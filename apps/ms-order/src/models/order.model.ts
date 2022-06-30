@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import { Types } from "mongoose";
+import { customAlphabet } from "nanoid";
+
+const codeGenerator = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890", 10);
 
 export interface OrderDocument extends mongoose.Document {
     price: number;
@@ -26,6 +29,16 @@ export interface OrderDocument extends mongoose.Document {
         articles: Object[],
         menus: Object[]
     }
+    // summary: {
+    //     articles: {
+    //         article: Object,
+    //         quantity: number
+    //     }[],
+    //     menus:{
+    //         _id: Object,
+    //         quantity: number
+    //     }[]
+    // }
     // restaurant: {
     //     _id: Types.ObjectId;
     //     name: string;
@@ -62,6 +75,7 @@ export interface OrderDocument extends mongoose.Document {
     },
     userId: string;
     orderStatus: Types.ObjectId;
+    code?: string;
     deletedAt?: Date | null;
 }
 
@@ -173,6 +187,12 @@ const OrderSchema = new mongoose.Schema({
     },
     userId: {type: String, required: true},
     orderStatus: {type: Types.ObjectId, ref: "OrderStatus", required: true, default: null},
+    code: {
+        type: String, 
+        required: true,
+        unique: true,
+        default: () => `${codeGenerator()}`,
+    },
     deletedAt: {type: Date, required: false, default: null},
 },{
     timestamps:true
