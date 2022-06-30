@@ -1,8 +1,33 @@
 import { DocumentDefinition, FilterQuery, now, QueryOptions, UpdateQuery } from "mongoose";
 import OrderModel, { OrderDocument } from "../models/order.model";
+import ArticleModel from "../models/article.model";
+import RestaurantModel from "../models/restaurant.model";
+import MenuModel from "../models/menu.model";
+import ArticleCategoryModel from "../models/articleCategory.model";
 
 export async function createOrder(input: DocumentDefinition<OrderDocument>) {
-    return OrderModel.create(input);
+    return (await OrderModel.create(input)).populate([{
+        path: "summary.articles",
+        match: {deletedAt: null},
+        populate: {
+            path: "articleCategory",
+        }
+    },
+    {
+        path: "summary.menus",
+        match: {deletedAt: null},
+        populate: {
+            path: "content",
+            populate: {
+                path: "articles",
+                model: "Article",
+                match: {deletedAt: null},
+                populate: {
+                    path: "articleCategory"
+                }
+            }
+        }
+    }]);
 }
 
 export async function getOrder(

@@ -61,6 +61,11 @@ function routes(app: Express) {
     app.get("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(getWalletSchema), getWalletHandler) //-> not useful
     app.put("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(updateWalletSchema), updateWalletHandler) //-> not useful
     app.delete("/users/wallets/me/:walletid", requireUser("customer"), validateRessource(deleteWalletSchema), deleteWalletHandler)
+
+    //Health check route :
+    app.get("/healthcheck", (req: Request, res: Response) => {
+        res.sendStatus(200);
+    })
 }
 
 // async function WIPHandle(req: Request, res: Response) {

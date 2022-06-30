@@ -3,9 +3,9 @@ import { object, number, string, TypeOf, boolean, array } from "zod";
 const createOrderPayload = {
     body: object({
 
-        price: number({
-            required_error: "Prix requis"
-        }).min(0, "Prix doit être supérieur à 0"),
+        // price: number({
+        //     required_error: "Prix requis"
+        // }).min(0, "Prix doit être supérieur à 0"),
 
         summary: object({
             articles: array(string()),

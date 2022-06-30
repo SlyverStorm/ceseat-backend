@@ -47,8 +47,10 @@ function routes(app: Express) {
     app.get("/restaurants/articles/:articleid", validateRessource(getArticleSchema), getArticleHandler) //OK!
     app.get("/restaurants/:restaurantid/articles", (req: Request<GetRestaurantInput["params"], {}, {}>, res) => getAllArticlesHandler(req, res, false)) //OK!
     
- 
-
+    //Health check route :
+    app.get("/healthcheck", (req: Request, res: Response) => {
+        res.sendStatus(200);
+    })
 
 }
 

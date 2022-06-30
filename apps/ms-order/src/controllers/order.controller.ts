@@ -6,6 +6,8 @@ import { toObjectId, toObjectIdArray } from "../utils/mongoose.utils";
 
 
 
+
+
 export async function createOrderHandler(req: Request<{}, {}, CreateOrderInput["body"]>, res: Response) {
 
     const userid = res.locals.user.id;
@@ -27,9 +29,13 @@ export async function createOrderHandler(req: Request<{}, {}, CreateOrderInput["
         driver: toObjectId(data.driver),
         userId: userid,
         orderStatus: defaultOrderStatus._id,
+        price: 0,
     }
 
     let order = await createOrder({...formatedData});
+    // let totalPrice = 0
+    // order.summary.articles.forEach(article => totalPrice += article.price);
+    return res.status(200).send(order);
 
     // const restaurant = await getRestaurant({userId: userid});
     // if (restaurant === null) return res.sendStatus(403);
