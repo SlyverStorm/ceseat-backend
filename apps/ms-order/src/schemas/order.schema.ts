@@ -16,10 +16,6 @@ const createOrderPayload = {
             required_error: "Identifiant de restaurant requis"
         }),
 
-        driver: string({
-            required_error: "Identifiant du livreur requis"
-        }),
-
         wallet: object({
             cardNumber: string({
                 required_error: "Numéro de carte requis"

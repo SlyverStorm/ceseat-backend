@@ -28,7 +28,9 @@ export default {
         port: 3000,
         dbUri: process.env.DATABASE_URL, // ex : "mongodb://db:27017"
         authHost: "localhost",
-        authPort: 4100
+        authPort: 4100,
+        restaurantHost: "localhost",
+        restaurantPort: 4100,
     }, 
 
     //Images upload variables

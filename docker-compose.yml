@@ -12,7 +12,8 @@ services:
       - 4100:4100
     depends_on:
       - ms-auth
-      # - ms-restaurant
+      - ms-restaurant
+      - ms-order
 
 # Backend databases :
   db-mysql:
@@ -68,5 +69,18 @@ services:
       - DATABASE_URL=mongodb://db-mongodb:27017
     build:
         context: ./apps/ms-restaurant/
+    depends_on:
+      - db-mongodb
+
+  ms-order:
+    container_name: ms-order
+    restart: unless-stopped
+    # ports:
+    #   - "3001:3000"
+    environment:
+      - NODE_ENV=DOCKER
+      - DATABASE_URL=mongodb://db-mongodb:27017
+    build:
+        context: ./apps/ms-order/
     depends_on:
       - db-mongodb

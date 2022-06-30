@@ -23,8 +23,8 @@ export interface OrderDocument extends mongoose.Document {
     //     }],
     // }
     summary: {
-        articles: Types.ObjectId[],
-        menus: Types.ObjectId[]
+        articles: Object[],
+        menus: Object[]
     }
     // restaurant: {
     //     _id: Types.ObjectId;
@@ -37,7 +37,16 @@ export interface OrderDocument extends mongoose.Document {
     //         longitude: number;
     //     }
     // },
-    restaurant: Types.ObjectId,
+    restaurant: {
+        _id: Types.ObjectId;
+        name: string;
+        description?: string;
+        address: {
+            label: string;
+            latitude: number;
+            longitude: number;
+        }
+    },
     // driver: {
     //     driverUserId: string
     //     driverStatus: Types.ObjectId;
@@ -45,7 +54,7 @@ export interface OrderDocument extends mongoose.Document {
     //     surname: string;
     //     image?: string;
     // },
-    driver: Types.ObjectId,
+    driver: Types.ObjectId | null,
     wallet: {
         cardNumber: string;
     },
@@ -65,16 +74,22 @@ const OrderSchema = new mongoose.Schema({
         type: Object,
         required: true,
         properties: {
-            // articles: [{
-            //     type: Object,
-            //     required: true,
+            articles: [{
+                type: Object,
+                required: true,
+            }],
+            menus: [{
+                type: Object,
+                required: true,
+            }]
+        }
             //     properties: {
             //         name: {type: String, required: true},
             //         price: {type: Number, required: true},
             //         quantity: {type: Number, required: true},
             //     }
             // }],
-            Articles: [{type: Types.ObjectId, ref: "Article", required: true}],
+            // Articles: [{type: Types.ObjectId, ref: "Article", required: true}],
             // menus : [{
             //     type: Object,
             //     required: true,
@@ -99,8 +114,7 @@ const OrderSchema = new mongoose.Schema({
             //         }]
             //     }
             // }]
-            Menus: [{type: Types.ObjectId, ref: "Menu", required: true}]
-        }
+            // Menus: [{type: Types.ObjectId, ref: "Menu", required: true}]
     },
     // restaurant: {
     //     type: Object,
@@ -121,7 +135,24 @@ const OrderSchema = new mongoose.Schema({
     //         }
     //     }
     // },
-    restaurant: {type: Types.ObjectId, ref: "Restaurant", required: true},
+    restaurant: {
+        type: Object,
+        required: true,
+        properties: {
+            _id: {type: Types.ObjectId, required: true},
+            name: {type: String, required: true},
+            description: {type: String, required: false, default: ""},
+            address: {
+                type: Object,
+                required: true,
+                properties: {
+                    label: {type: String, required: true},
+                    latitude: {type: Number, required: true},
+                    longitude: {type: Number, required: true},
+                }
+            }
+        }
+    },
     // driver: {
     //     type: Object,
     //     required: true,
@@ -133,7 +164,7 @@ const OrderSchema = new mongoose.Schema({
     //         image: {type: String, required: false, default: null},
     //     }
     // },
-    driver: {type: Types.ObjectId, ref: "Driver", required: true},
+    driver: {type: Types.ObjectId, ref: "DriverStatus", required: false, default: null},
     wallet: {
         type: Object,
         required: true,
@@ -151,7 +182,7 @@ const OrderSchema = new mongoose.Schema({
         }
     },
     userId: {type: String, required: true},
-    orderStatus: {type: Types.ObjectId, ref: "OrderStatus", required: true},
+    orderStatus: {type: Types.ObjectId, ref: "OrderStatus", required: true, default: null},
     deletedAt: {type: Date, required: false, default: null},
 },{
     timestamps:true

@@ -7,10 +7,9 @@ export enum StatusType {
 }
 
 export interface DriverStatusDocument extends mongoose.Document {
-    status: StatusType; 
+    status: string; 
     driverId: string;
     position: {
-        label: string;
         latitude: number;
         longitude: number;
     };
@@ -18,13 +17,12 @@ export interface DriverStatusDocument extends mongoose.Document {
 }
 
 const DriverStatusSchema = new mongoose.Schema({
-    status: {type: StatusType, required: true},
+    status: {type: String, required: true},
     driverId: {type: String, required: true},
     position: {
         type: Object,
         required: true,
         properties: {
-            label: {type: String, required: true},
             latitude: {type: Number, required: true},
             longitude: {type: Number, required: true}
         }
