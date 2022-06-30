@@ -31,7 +31,37 @@ export async function getRestaurant(req: Request, restaurantid: string): Promise
         authReq.write("");
         authReq.end();
     });
+}
 
+export async function getAllRestaurants(req: Request): Promise<any> {
+
+    return new Promise((resolve, reject) => {
+
+        const options = {
+            host: config.get<string>("connect.restaurantHost"),
+            port: config.get<number>("connect.restaurantPort"),
+            path: '/restaurants',
+            method: 'GET',
+            headers: {
+                'Cookie': req.headers.cookie
+            }
+        };
+
+        let restaurants: any = null
+        const authReq = request(options, (res) => {
+            res.setEncoding('utf8');
+            res.on('data', (chunk) => {
+                if (res.statusCode === 200) restaurants = JSON.parse(chunk);
+                resolve(restaurants);
+            }
+            );
+        });
+        authReq.on('error', (e) => {
+            reject(e);
+        })
+        authReq.write("");
+        authReq.end();
+    });
 }
 
 export async function getUserRestaurant(req: Request): Promise<any> {
