@@ -15,17 +15,20 @@ export async function getRestaurant(
     return RestaurantModel.findOne({...query, deletedAt: null}, {}, options)
     .populate([{
         path: "articles",
+        match: {deletedAt: null},
         populate: {
             path: "articleCategory",
         }
     },
     {
         path: "menus",
+        match: {deletedAt: null},
         populate: {
             path: "content",
             populate: {
                 path: "articles",
                 model: "Article",
+                match: {deletedAt: null},
                 populate: {
                     path: "articleCategory"
                 }

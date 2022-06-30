@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import { CreateArticleInput, DeleteArticleInput, GetArticleInput, UpdateArticleInput } from "../schemas/article.schema";
 import { GetRestaurantInput } from "../schemas/restaurant.schema";
 import { createArticle, deleteArticle, getAllArticles, getArticle, updateArticle } from "../services/article.service";
+import { getAllMenus } from "../services/menu.service";
 import { getRestaurant, updateRestaurant } from "../services/restaurant.service";
 import logger from "../utils/logger.util";
 
@@ -93,6 +94,14 @@ export async function deleteArticleHandler(req: Request<DeleteArticleInput["para
     }
     else if (!restaurant.articles || (restaurant.articles && restaurant.articles.indexOf(new Types.ObjectId(articleid)) === -1)) {
         return res.status(403).send("Forbidden: article not found in restaurant");
+    }
+
+    const menus = await getAllMenus({restaurantId: restaurant._id});
+    console.log(JSON.stringify(menus))
+    console.log(menus.find((menu) => menu.content?.find((c) => c.articles.find((article) => article._id === new Types.ObjectId(articleid)))))
+    menus.map((menu) => menu.content?.map((c) => c.articles.map((article) => console.log(article._id, new Types.ObjectId(articleid), article._id === new Types.ObjectId(articleid)))))
+    if (menus != null && menus.length > 0 && menus.find((menu) => menu.content?.find((c) => c.articles.find((article) => article._id.toString() === articleid))) != undefined) {
+        return res.status(403).send("Forbidden: article is in menu");
     }
 
     const deletion = await deleteArticle({_id: articleid});
