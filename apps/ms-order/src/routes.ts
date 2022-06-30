@@ -10,9 +10,9 @@ function routes(app: Express) {
     app.post("/orders/me", requireUser("customer"), validateRessource(createOrderSchema), createOrderHandler)
 
     //Get order
-    app.get("/orders/me", requireUser("customer"), getOrdersClientHandler)
-    app.get("/orders/restaurants/me", requireUser("restaurant"), getOrdersRestaurantHandler)
-    app.get("/orders/drivers/me", requireUser("driver"), getOrdersDriverHandler)
+    app.get("/orders/me", requireUser("customer"), getOrdersClientHandler)                      //Completed ou non
+    app.get("/orders/restaurants/me", requireUser("restaurant"), getOrdersRestaurantHandler)    //Copmpleted ou non
+    app.get("/orders/drivers/me", requireUser("driver"), getOrdersDriverHandler)                //Copmpleted ou non
     app.get("/orders/drivers/search", requireUser("driver"), searchForOrders)
     app.get("/orders", requireUser("commercial"), getAllOrdersHandler)
 
