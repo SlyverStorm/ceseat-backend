@@ -7,7 +7,6 @@ import swaggerDocs from "./utils/swagger.util";
 import cors from "cors";
 import connect from "./utils/connect";
 import requestLogger from "./middleware/requestLogger";
-import deserializeUser from "./middleware/deserializeUser";
 
 //Displaying context data (app name and version) from configuration :
 const appName = config.get<number>("context.appName");
@@ -18,7 +17,6 @@ logger.info(`Starting ${appName} V${appVersion} ...`);
 const app = express();
 //Using express json parser to handle request body handling
 app.use(express.json());
-//app.use(express.);
 app.use(
     cors({
       credentials: true,
@@ -28,7 +26,6 @@ app.use(
     })
   );
 app.use(requestLogger);
-// app.use(deserializeUser);
 
 //Importing listen port from configuration
 const port = config.get<number>("connect.port");

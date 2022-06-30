@@ -50,6 +50,7 @@ export interface OrderDocument extends mongoose.Document {
     },
     userId: string;
     orderStatus: Types.ObjectId;
+    deletedAt?: Date | null;
 }
 
 const OrderSchema = new mongoose.Schema({
@@ -141,6 +142,7 @@ const OrderSchema = new mongoose.Schema({
     },
     userId: {type: String, required: true},
     orderStatus: {type: Types.ObjectId, ref: "OrderStatus", required: true},
+    deletedAt: {type: Date, required: false, default: null},
 },{
     timestamps:true
 });

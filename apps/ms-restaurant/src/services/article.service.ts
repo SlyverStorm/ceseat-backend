@@ -2,7 +2,7 @@ import { DocumentDefinition, FilterQuery, now, QueryOptions, UpdateQuery } from 
 import ArticleModel, { ArticleDocument } from "../models/article.model";
 
 export async function createArticle(input: DocumentDefinition<ArticleDocument>) {
-    return ArticleModel.create(input);
+    return (await ArticleModel.create(input)).populate("articleCategory");
 }
 
 export async function getArticle(

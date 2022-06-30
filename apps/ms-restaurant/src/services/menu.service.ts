@@ -2,7 +2,18 @@ import { DocumentDefinition, FilterQuery, now, QueryOptions, UpdateQuery } from 
 import MenuModel, { MenuDocument } from "../models/menu.model";
 
 export async function createMenu(input: DocumentDefinition<MenuDocument>) {
-    return MenuModel.create(input);
+    return (await MenuModel.create(input)).populate(
+        {
+            path: "content",
+            populate: {
+                path: "articles",
+                model: "Article",
+                populate: {
+                    path: "articleCategory"
+                }
+            }
+        }
+    );
 }
 
 export async function getMenu(
