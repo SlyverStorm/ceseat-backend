@@ -12,7 +12,7 @@ function connect(){
         
         // Normal Status :
         OrderStatusModel.create({
-            orderStatusId: 1,
+            stateNumber: 1,
             title: "En attente validation commande",
             description: "L'utilisateur a créé la commande et est en attente de validation par le restaurant",
             cancelled: false
@@ -20,7 +20,7 @@ function connect(){
         .catch(() => logger.warn(`Order status "En attente validation commande" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: 2,
+            stateNumber: 2,
             title: "En attente livreur",
             description: "La commande est validée par le restaurant et est en attente d'un livreur disponible",
             cancelled: false
@@ -28,7 +28,7 @@ function connect(){
         .catch(() => logger.warn(`Order status "En attente livreur" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: 3,
+            stateNumber: 3,
             title: "En attente préparation commande",
             description: "La commande est prise en charge par un livreur et est en attente de préparation",
             cancelled: false
@@ -36,7 +36,7 @@ function connect(){
         .catch(() => logger.warn(`Order status "En attente préparation commande" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: 4,
+            stateNumber: 4,
             title: "En cours de préparation",
             description: "La commande est en cours de préparation",
             cancelled: false
@@ -44,7 +44,7 @@ function connect(){
         .catch(() => logger.warn(`Order status "En cours de préparation" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: 5,
+            stateNumber: 5,
             title: "Commande prête",
             description: "La commande est prête et en attente de livraison",
             cancelled: false
@@ -52,7 +52,7 @@ function connect(){
         .catch(() => logger.warn(`Order status "Commande prête" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: 6,
+            stateNumber: 6,
             title: "En cours de livraison",
             description: "La commande est en cours de livraison",
             cancelled: false
@@ -60,7 +60,7 @@ function connect(){
         .catch(() => logger.warn(`Order status "En cours de livraison" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: 7,
+            stateNumber: 7,
             title: "Commande livrée",
             description: "La commande à bien été livrée au client",
             cancelled: false
@@ -69,7 +69,7 @@ function connect(){
 
         // Cancel status :
         // OrderStatusModel.create({
-        //     orderStatusId: -1,
+        //     stateNumber: -1,
         //     title: "Annulée par le client",
         //     description: "Le client a annulé la commande",
         //     cancelled: true
@@ -77,7 +77,7 @@ function connect(){
         // .catch(() => logger.warn(`Order status "Annulée par le client" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: -1,
+            stateNumber: -1,
             title: "Réfusée",
             description: "Le restaurant a refusé la commande",
             cancelled: true
@@ -85,7 +85,7 @@ function connect(){
         .catch(() => logger.warn(`Order status "Refusée" already exists`));
 
         OrderStatusModel.create({
-            orderStatusId: -2,
+            stateNumber: -2,
             title: "Aucun livreur trouvé",
             description: "Aucun livreur n'a été trouvé pour la livraison de la commande",
             cancelled: true
@@ -94,7 +94,7 @@ function connect(){
 
 
         // OrderStatusModel.create({
-        //     orderStatusId: -4,
+        //     stateNumber: -4,
         //     title: "Annulée par le restaurant",
         //     description: "Le restaurant a annulé la commande",
         //     cancelled: true

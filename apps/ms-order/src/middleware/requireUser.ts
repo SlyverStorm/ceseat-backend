@@ -37,6 +37,15 @@ function verifyAuth(req: Request, path: "all" | "customer" | "driver" | "restaur
 
 }
 
+const userrole = {
+    customer: 1,
+    driver: 2,
+    restaurant: 3,
+    commercial: 4,
+    technical: 5,
+    all: null
+}
+
 const requireUser = (roleName: "customer" | "driver" | "restaurant" | "commercial" | "technical" | "all") =>
 async (req: Request, res: Response, next: NextFunction) => {
 
@@ -44,17 +53,13 @@ async (req: Request, res: Response, next: NextFunction) => {
 
     const user: any = await verifyAuth(req, roleName);
 
-    if (user != null && user.role === 3) {
-        res.locals.user = user;
-        return next()
+    if (user != null) {
+        if (userrole[roleName] === null || user.role === userrole[roleName]) {
+            res.locals.user = user;
+            return next()
+        }
     }
-    else {
-        // res.locals.user = {
-        //     id: "user_adminadmin" 
-        // }
-        // return next()
-        return res.sendStatus(403)
-    }
+    return res.sendStatus(403)
 }
 
 export default requireUser
