@@ -1,0 +1,6 @@
+{
+    "connect": {
+        "authHost": "nginx-proxy",
+        "authPort": 4100
+    }
+}
