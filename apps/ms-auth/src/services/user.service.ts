@@ -137,6 +137,10 @@ export async function validateUserCredentials(credentials: CreateSessionInput["b
       email: credentials.email,
       deleted: false
     },
+    select: {
+      ...commGetUserOutput,
+      password: true
+    }
   });
   if (!user) return { valid: false, user: null, suspension: false };
 
@@ -144,5 +148,7 @@ export async function validateUserCredentials(credentials: CreateSessionInput["b
 
   const isValid = await bcrypt.compare(credentials.password, user.password)
   if(!isValid) return  {valid: isValid, user: null, suspension: false}
+  //@ts-ignore
+  delete user.password
   return {valid: isValid, user: user, suspension: false};
 };

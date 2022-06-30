@@ -79,13 +79,13 @@ export async function updateMenuHandler(req: Request<UpdateMenuInput["params"], 
     const userid = res.locals.user.id;
     //const userid = "user_adminadmin";
 
-    const restaurant = await getRestaurant({userId: userid},{});
+    const restaurant = await getRestaurant({userId: userid},{}, false);
     //logger.debug(restaurant!.Menus!.indexOf(new Types.ObjectId(Menuid)));
     if (restaurant === null) {
-        return res.sendStatus(403);
+        return res.status(403).send("Forbidden: restaurant not found");
     }
     else if (!restaurant.menus || (restaurant.menus && restaurant.menus.indexOf(new Types.ObjectId(menuid)) === -1)) {
-        return res.sendStatus(403);
+        return res.status(403).send("Forbidden: menu not found in restaurant");
     }
 
     //TODO: check if user has permission to update this Menu
@@ -103,13 +103,13 @@ export async function deleteMenuHandler(req: Request<DeleteMenuInput["params"], 
     const userid = res.locals.user.id;
     //const userid = "user_adminadmin";
 
-    const restaurant = await getRestaurant({userId: userid},{});
+    const restaurant = await getRestaurant({userId: userid},{}, false);
     //logger.debug(restaurant!.Menus!.indexOf(new Types.ObjectId(Menuid)));
     if (restaurant === null) {
-        return res.sendStatus(403);
+        return res.status(403).send("Forbidden: restaurant not found");
     }
     else if (!restaurant.menus || (restaurant.menus && restaurant.menus.indexOf(new Types.ObjectId(menuid)) === -1)) {
-        return res.sendStatus(403);
+        return res.status(403).send("Forbidden: menu not found in restaurant");
     }
 
     const deletion = await deleteMenu({_id: menuid});

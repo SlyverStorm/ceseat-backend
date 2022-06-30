@@ -56,7 +56,7 @@ export async function createUserHandler(
     //Create an access token
     const accessToken = signJwt(
         {
-            id: user.id,
+            ...user,
             session: session.id,
             role: user.roleId
         },
@@ -69,7 +69,7 @@ export async function createUserHandler(
     //Create a refresh token
     const refreshToken = signJwt(
         {
-            id: user.id,
+            ...user,
             session: session.id,
             role: user.roleId
         },

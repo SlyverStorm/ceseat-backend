@@ -9,7 +9,9 @@ export async function createRestaurant(input: DocumentDefinition<RestaurantDocum
 export async function getRestaurant(
     query: FilterQuery<RestaurantDocument>,
     options: QueryOptions = {lean: true},
+    populate: boolean = true
 ) {
+    if (!populate) return RestaurantModel.findOne({...query, deletedAt: null}, {}, options)
     return RestaurantModel.findOne({...query, deletedAt: null}, {}, options)
     .populate([{
         path: "articles",

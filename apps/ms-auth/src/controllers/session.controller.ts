@@ -34,9 +34,9 @@ export async function createSessionHandler(
     //Create an access token
     const accessToken = signJwt(
         {
-            id: user.id,
+            ...user,
             session: session.id,
-            role: user.roleId
+            role: user.role.id,
         },
         "accessTokenPrivateKey",
         {
@@ -47,9 +47,9 @@ export async function createSessionHandler(
     //Create a refresh token
     const refreshToken = signJwt(
         {
-            id: user.id,
+            ...user,
             session: session.id,
-            role: user.roleId
+            role: user.role.id
         },
         "refreshTokenPrivateKey",
         {

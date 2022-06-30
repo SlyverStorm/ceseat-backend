@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import config from "config";
 import { get } from "lodash";
+import { roles } from "../../prisma/default";
 import prismaClient from "../middleware/prisma";
 import { signJwt, verifyJwt } from "../utils/jwt.util";
 import logger from "../utils/logger.util";
@@ -112,20 +113,26 @@ export async function reIssueAccessToken({
 
   if (!session || !session.valid) return false;
 
-  const user = await getUser(session.userId);
+  const user = await getUser(session.userId, true);
 
   if (!user) return false;
 
   const accessToken = signJwt(
-    { ...user, session: session.id },
+    { 
+      ...user, 
+      session: session.id,
+      role: user.role.id,
+    },
     "accessTokenPrivateKey",
     { expiresIn: config.get("jwt.accessTokenTtl") } // 15 minutes
   );
-
+  
+  console.log(accessToken)
   return accessToken;
 }
 
 export async function verifySession(token: any) {
+  console.log(token)
   const user = await prisma.user.findUnique({
     where: {
       id: token.id

@@ -61,13 +61,14 @@ export async function updateArticleHandler(req: Request<UpdateArticleInput["para
     const userid = res.locals.user.id;
     //const userid = "user_adminadmin";
 
-    const restaurant = await getRestaurant({userId: userid},{});
+    const restaurant = await getRestaurant({userId: userid},{}, false);
     //logger.debug(restaurant!.articles!.indexOf(new Types.ObjectId(articleid)));
     if (restaurant === null) {
-        return res.sendStatus(403);
+        return res.status(403).send("Forbidden: restaurant not found");
     }
     else if (!restaurant.articles || (restaurant.articles && restaurant.articles.indexOf(new Types.ObjectId(articleid)) === -1)) {
-        return res.sendStatus(403);
+        //console.log(restaurant.articles);
+        return res.status(403).send("Forbidden: article not found in restaurant");
     }
 
     //TODO: check if user has permission to update this Article
@@ -85,13 +86,13 @@ export async function deleteArticleHandler(req: Request<DeleteArticleInput["para
     const userid = res.locals.user.id;
     //const userid = "user_adminadmin";
 
-    const restaurant = await getRestaurant({userId: userid},{});
+    const restaurant = await getRestaurant({userId: userid},{}, false);
     //logger.debug(restaurant!.articles!.indexOf(new Types.ObjectId(articleid)));
     if (restaurant === null) {
-        return res.sendStatus(403);
+        return res.status(403).send("Forbidden: restaurant not found");
     }
     else if (!restaurant.articles || (restaurant.articles && restaurant.articles.indexOf(new Types.ObjectId(articleid)) === -1)) {
-        return res.sendStatus(403);
+        return res.status(403).send("Forbidden: article not found in restaurant");
     }
 
     const deletion = await deleteArticle({_id: articleid});
