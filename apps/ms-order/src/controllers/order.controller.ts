@@ -233,7 +233,7 @@ export async function cancelOrder(req: Request<GetOrderInput["params"], {}, {}>,
     const restaurant = await getRestaurant(req, userid);
     if (restaurant === null) return res.status(404).send("Restaurant not found");
 
-    const order: any = await getOrder({_id: orderid, restaurant: restaurant._id});
+    const order: any = await getOrder({_id: orderid, $match: {'restaurant._id': restaurant._id}});
     if (order === null) return res.status(404).send("Order not found");
 
     if (order.orderStatus.stateNumber === 1) {
