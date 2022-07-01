@@ -11,9 +11,12 @@ services:
     ports:
       - 4100:4100
     depends_on:
-      - ms-auth
-      - ms-restaurant
-      - ms-order
+      - ms-auth-v1
+      - ms-auth-v2
+      - ms-restaurant-v1
+      - ms-restaurant-v2
+      - ms-order-v1
+      - ms-order-v2
 
 # Backend databases :
   db-mysql:
@@ -50,7 +53,6 @@ services:
         context: ./apps/ms-auth/
     depends_on:
       - db-mysql
-      - ms-restaurant
 
   ms-auth-v2:
     container_name: ms-auth-v2
@@ -62,7 +64,6 @@ services:
         context: ./apps/ms-auth/
     depends_on:
       - db-mysql
-      - ms-restaurant
 
   ms-restaurant-v1:
     container_name: ms-restaurant-v1
