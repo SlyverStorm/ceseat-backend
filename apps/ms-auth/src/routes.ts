@@ -64,7 +64,7 @@ function routes(app: Express) {
 
     //Health check route :
     app.get("/healthcheck", (req: Request, res: Response) => {
-        res.status(200).send("Authentification microservice working !");
+        res.status(200).send("Authentification microservice working !!!");
     })
 }
 
