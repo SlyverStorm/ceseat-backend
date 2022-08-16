@@ -81,9 +81,9 @@ node {
 
     stage("Push docker images") {
         sh '''
-            docker push slyverstorm16/ceseat-ms-auth
-            docker push slyverstorm16/ceseat-ms-restaurant
-            docker push slyverstorm16/ceseat-ms-order
+            docker push slyverstorm16/ceseat-ms-auth:$version
+            docker push slyverstorm16/ceseat-ms-restaurant:$version
+            docker push slyverstorm16/ceseat-ms-order:$version
         '''
     }
 
