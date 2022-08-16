@@ -81,6 +81,7 @@ node {
 
     stage("Push docker images") {
         sh '''
+            version=`cat package.json | grep -oP '(?<=\"version\": \")[^\"]*'`
             docker push slyverstorm16/ceseat-ms-auth:$version
             docker push slyverstorm16/ceseat-ms-restaurant:$version
             docker push slyverstorm16/ceseat-ms-order:$version
