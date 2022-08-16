@@ -66,9 +66,10 @@ node {
 
     stage("Building docker images") {
         //def appVersion = readJSON file:'package.json'
-        def appVersion = sh "cat package.json | grep -oP '(?<=\"version\": \")[^\"]*'"
+        //def appVersion = sh "cat package.json | grep -oP '(?<=\"version\": \")[^\"]*'"
         sh '''
-            docker build -t slyverstorm16/ceseat-ms-auth:${appVersion} ./apps/ms-auth/
+            version=`cat package.json | grep -oP '(?<=\"version\": \")[^\"]*'`
+            docker build -t slyverstorm16/ceseat-ms-auth:$version ./apps/ms-auth/
         '''
     }
 
