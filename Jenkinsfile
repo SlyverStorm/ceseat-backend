@@ -75,7 +75,7 @@ node {
 
     stage("Push docker images") {
         withCredentials([string(credentialsId: 'slyverstorm16-dockerhub-secret', variable: 'dockerHubPwd')]) {
-            sh "docker login -u slyverstorm16 -p ${dockerHubPwd}"
+            sh "docker login -u slyverstorm16 -p \"${dockerHubPwd}\""
         }
         sh """
             version=`cat package.json | grep -oP '(?<=\"version\": \")[^\"]*'`
