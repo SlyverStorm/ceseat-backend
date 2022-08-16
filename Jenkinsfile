@@ -64,6 +64,12 @@ node {
         checkout scm
     }
 
+    stage ("Logging to Docker Hub") {
+        withCredentials([string(credentialsId: 'slyverstorm16-dockerhub-secret', variable: 'dockerHubPwd')]) {
+            sh "docker login -u slyverstorm16 -p \"${dockerHubPwd}\""
+        }
+    }
+
     stage("Building docker images") {
         sh '''
             version=`cat package.json | grep -oP '(?<=\"version\": \")[^\"]*'`
@@ -74,15 +80,11 @@ node {
     }
 
     stage("Push docker images") {
-        withCredentials([string(credentialsId: 'slyverstorm16-dockerhub-secret', variable: 'dockerHubPwd')]) {
-            sh "docker login -u slyverstorm16 -p \"${dockerHubPwd}\""
-            sh """
-                docker push slyverstorm16/ceseat-ms-auth:$version ./apps/ms-auth/
-                docker push slyverstorm16/ceseat-ms-restaurant:$version ./apps/ms-restaurant/
-                docker push slyverstorm16/ceseat-ms-order:$version ./apps/ms-order/
-            """
-        }
-        
+        sh '''
+            docker push slyverstorm16/ceseat-ms-auth
+            docker push slyverstorm16/ceseat-ms-restaurant
+            docker push slyverstorm16/ceseat-ms-order
+        '''
     }
 
     stage("Prune docker data") {
