@@ -17,9 +17,28 @@ pipeline {
             }
         }
 
+        stage("Building docker images") {
+            steps {
+                def packageInfo = readJSON file:'package.json'
+                sh '''
+                    docker build -t slyverstorm16/ceseat-ms-auth:${packageInfo.version} ./apps/ms-auth/
+                '''
+            }
+        }
+
+        // stage("Push docker images") {
+        //     steps {
+        //         sh '''
+        //             docker-compose push
+        //         '''
+        //     }
+        // }
+
         stage("Prune docker data") {
             steps {
-                sh "docker system prune -a --volumes -f"
+                sh """
+                    docker system prune -a --volumes -f
+                """
             }
         }
 
